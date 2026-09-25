@@ -30,23 +30,30 @@ def _client() -> OpenAI:
     return OpenAI(base_url=config.LLM_BASE_URL, api_key=config.LLM_API_KEY, max_retries=3)
 
 
+class AllModelsExhausted(RuntimeError):
+    pass
+
+
 _exhausted: set[str] = set()  # models that hit their quota (429) this process; skip them
 
 
-def complete(client: OpenAI, **kwargs):
+def complete(client: OpenAI, model: str | None = None, **kwargs):
     """chat.completions.create with model fallback when a model is overloaded or out of quota."""
-    models = [m for m in [config.LLM_MODEL] + config.FALLBACK_MODELS if m not in _exhausted]
+    candidates = [model or config.LLM_MODEL] + config.FALLBACK_MODELS
+    models = [m for m in dict.fromkeys(candidates) if m not in _exhausted]
     if not models:
-        raise RuntimeError("All configured models are out of quota; try again later.")
-    for i, model in enumerate(models):
+        raise AllModelsExhausted("All configured models are out of quota; try again later.")
+    for i, m in enumerate(models):
         try:
-            return client.chat.completions.create(model=model, **kwargs)
+            return client.chat.completions.create(model=m, **kwargs)
         except APIStatusError as e:
+            if e.status_code == 429:
+                _exhausted.add(m)
+                if i == len(models) - 1:
+                    raise AllModelsExhausted(f"{m} is out of quota and no fallbacks remain") from e
             if e.status_code not in (429, 503) or i == len(models) - 1:
                 raise
-            if e.status_code == 429:
-                _exhausted.add(model)
-            print(f"[{model} unavailable ({e.status_code}), falling back to {models[i + 1]}]", file=sys.stderr)
+            print(f"[{m} unavailable ({e.status_code}), falling back to {models[i + 1]}]", file=sys.stderr)
 
 
 FINALIZE_PROMPT = """Now give your final answer as JSON.
