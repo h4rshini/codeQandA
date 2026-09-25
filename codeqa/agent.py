@@ -1,5 +1,5 @@
-"""Step 2: the agent loop. The model sees the question + tool schemas, calls tools,
-reads the results, and repeats until it produces a final answer.
+"""Steps 2-3: the agent loop. The model sees the question + tool schemas, calls tools,
+reads the results, and repeats; a final formatting call returns a validated AgentAnswer.
 
 Usage: python -m codeqa.agent "How are passwords hashed?"
 """
@@ -7,8 +7,10 @@ import json
 import sys
 
 from openai import APIStatusError, OpenAI
+from pydantic import ValidationError
 
 from codeqa import config
+from codeqa.schemas import RESPONSE_FORMAT, AgentAnswer
 from codeqa.tools import TOOL_SCHEMAS, execute_tool
 
 MAX_STEPS = 8
@@ -24,19 +26,49 @@ def _client() -> OpenAI:
     return OpenAI(base_url=config.LLM_BASE_URL, api_key=config.LLM_API_KEY, max_retries=3)
 
 
+_exhausted: set[str] = set()  # models that hit their quota (429) this process; skip them
+
+
 def complete(client: OpenAI, **kwargs):
-    """chat.completions.create with model fallback when a model stays overloaded."""
-    models = [config.LLM_MODEL] + config.FALLBACK_MODELS
+    """chat.completions.create with model fallback when a model is overloaded or out of quota."""
+    models = [m for m in [config.LLM_MODEL] + config.FALLBACK_MODELS if m not in _exhausted]
+    if not models:
+        raise RuntimeError("All configured models are out of quota; try again later.")
     for i, model in enumerate(models):
         try:
             return client.chat.completions.create(model=model, **kwargs)
         except APIStatusError as e:
             if e.status_code not in (429, 503) or i == len(models) - 1:
                 raise
+            if e.status_code == 429:
+                _exhausted.add(model)
             print(f"[{model} unavailable ({e.status_code}), falling back to {models[i + 1]}]", file=sys.stderr)
 
 
-def run_agent(question: str, client: OpenAI | None = None, verbose: bool = False) -> str:
+FINALIZE_PROMPT = """Now give your final answer as JSON.
+- "answer": a direct, concise answer to the question.
+- "cited_files": the files and line ranges that support the answer. Only cite ranges you saw
+  in tool results; line numbers are 1-indexed and inclusive.
+- "confidence": "high" if you verified the answer in the code, "medium" if partly verified
+  or inferred, "low" if you could not find supporting code."""
+
+
+def _finalize(client: OpenAI, messages: list) -> AgentAnswer:
+    """Formatting call: tools off, JSON schema on. Retries once with the validation error."""
+    messages = messages + [{"role": "user", "content": FINALIZE_PROMPT}]
+    for attempt in range(2):
+        resp = complete(client, messages=messages, response_format=RESPONSE_FORMAT)
+        raw = resp.choices[0].message.content or ""
+        try:
+            return AgentAnswer.model_validate_json(raw)
+        except ValidationError as e:
+            if attempt == 1:
+                raise
+            messages = messages + [{"role": "assistant", "content": raw},
+                                   {"role": "user", "content": f"That JSON was invalid: {e}. Fix it."}]
+
+
+def run_agent(question: str, client: OpenAI | None = None, verbose: bool = False) -> AgentAnswer:
     client = client or _client()
     messages = [{"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": question}]
@@ -48,9 +80,10 @@ def run_agent(question: str, client: OpenAI | None = None, verbose: bool = False
         messages.append(msg.model_dump(exclude_none=True))
 
         if not msg.tool_calls:
-            return msg.content or ""
+            break  # model is done exploring
 
         for call in msg.tool_calls:
+            args = None
             try:
                 args = json.loads(call.function.arguments or "{}")
             except json.JSONDecodeError as e:
@@ -62,9 +95,10 @@ def run_agent(question: str, client: OpenAI | None = None, verbose: bool = False
                       f"{'ERROR ' + result['error'] if 'error' in result else 'ok'}", file=sys.stderr)
             messages.append({"role": "tool", "tool_call_id": call.id, "content": json.dumps(result)})
 
-    return "Stopped: reached the step limit without a final answer."
+    # Runs whether the model finished or hit the step limit, so there is always a structured answer.
+    return _finalize(client, messages)
 
 
 if __name__ == "__main__":
     q = " ".join(sys.argv[1:]) or "What does this project do?"
-    print(run_agent(q, verbose=True))
+    print(run_agent(q, verbose=True).model_dump_json(indent=2))
