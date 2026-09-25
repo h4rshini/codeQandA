@@ -51,7 +51,7 @@ models when one is rate-limited.
 
 ## Web app
 
-**Live demo:** _add your Hugging Face Space link here_
+**Live demo:** _add your Render link here_ (free instance: the first visit after a quiet spell takes about a minute to wake up)
 
 A FastAPI backend streams the agent's steps to the browser as they happen (Server-Sent Events). The
 page draws every file in the repo as a bar, then marks where the agent searched, what it read and which
@@ -70,10 +70,13 @@ Running it publicly on a free API key needed some guardrails ([web/guard.py](web
 .venv/bin/uvicorn web.app:app --reload        # then open http://127.0.0.1:8000
 ```
 
-**Deploying** ([deploy/huggingface/](deploy/huggingface/)): the Space needs only a Dockerfile and a
-README. At build time the image clones this repo, clones the target repo pinned to the commit the eval
-measured, and builds the index, so the published numbers, the cached answers and the live index all
-describe the same code. The API key is a Space secret, never part of the image.
+**Deploying** (free, on [Render](https://render.com)): [render.yaml](render.yaml) defines the service
+and the [Dockerfile](Dockerfile) builds it. At build time the image clones the target repo pinned to
+the commit the eval measured and builds the index, so the published numbers, the cached answers and
+the live index all describe the same code. The API key is a Render secret, never part of the image
+([.dockerignore](.dockerignore) keeps `.env` out). Every push to `main` redeploys. The free instance
+has 512 MB RAM (the app peaks around 380 MB) and sleeps after 15 idle minutes, so the first visit
+after a quiet spell takes about a minute.
 
 ## Evaluation
 
@@ -188,6 +191,6 @@ OpenAI-compatible endpoint works).
 codeqa/   indexer.py  tools.py  agent.py  schemas.py  tracing.py  config.py
 evals/    questions.yaml  run_eval.py  scoring.py  results/   (reports + per-question JSONL)
 web/      app.py (API)  guard.py (cache + limits)  static/index.html  seed_cache.json
-deploy/   huggingface/  (Dockerfile + Space README)
+Dockerfile, render.yaml   (free deploy on Render)
 tests/    offline tests with a fake LLM client
 ```

@@ -1,0 +1,14 @@
+# Render Blueprint: New -> Blueprint -> pick this repo. Render asks for GEMINI_API_KEY during setup.
+services:
+  - type: web
+    name: codeqanda
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/info
+    autoDeployTrigger: commit  # redeploy on every push to main
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false            # secret: entered in the dashboard, never stored in the repo
+      - key: CODEQA_WEB_CONCURRENCY
+        value: "1"             # free instances have 512 MB RAM; one live run at a time

@@ -1,0 +1,10 @@
+# Never ship secrets or local state into the image.
+.env
+.venv/
+.chroma/
+traces/
+.git/
+.claude/
+__pycache__/
+.pytest_cache/
+*.pyc
