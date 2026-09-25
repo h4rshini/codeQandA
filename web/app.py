@@ -39,6 +39,10 @@ if not os.environ.get("CODEQA_MODEL"):
 if not os.environ.get("CODEQA_FALLBACK_MODELS"):
     config.FALLBACK_MODELS = ["gemini-3.1-flash-lite"]
 
+LIVE = bool(config.LLM_API_KEY)
+if not LIVE:
+    log.warning("No API key set (GEMINI_API_KEY / LLM_API_KEY): only cached questions will work.")
+
 cache = AnswerCache()
 cache.load(SEED_CACHE)
 limiter = RateLimiter(PER_HOUR)
@@ -83,6 +87,9 @@ async def ask(body: AskRequest, request: Request):
     question = body.question.strip()
     if hit := cache.get(question):
         return _stream(_replay(hit))
+    if not LIVE:
+        raise HTTPException(503, "New questions are switched off on this server right now. "
+                                 "The example questions still work (they're instant).")
 
     if not running.acquire(blocking=False):
         _reject("Two questions are already being answered. Try again in a minute, "
@@ -155,7 +162,7 @@ def info():
     spec = yaml.safe_load((EVALS / "questions.yaml").read_text())
     return {"repo": repo_root().name, "chunks": _collection().count(), "model": config.LLM_MODEL,
             "examples": [q["question"] for q in spec["questions"]],
-            "live_left_today": daily.remaining(), "per_hour": PER_HOUR}
+            "live": LIVE, "live_left_today": daily.remaining() if LIVE else 0, "per_hour": PER_HOUR}
 
 
 @lru_cache(maxsize=1)

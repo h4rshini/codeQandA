@@ -127,3 +127,11 @@ def test_seed_cache_covers_every_example():
     c = AnswerCache()
     c.load(web.SEED_CACHE)
     assert all(c.get(q["question"]) for q in spec["questions"])
+
+
+def test_no_api_key_blocks_live_questions_without_using_limits(client, monkeypatch):
+    monkeypatch.setattr(web, "LIVE", False)
+    r = client.post("/api/ask", json={"question": "a brand new question"})
+    assert r.status_code == 503 and "example" in r.json()["detail"]
+    assert web.daily.remaining() == 100          # nothing was counted
+    assert client.get("/api/info").json()["live"] is False

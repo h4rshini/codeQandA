@@ -634,7 +634,9 @@ async function ask(question) {
 async function refreshQuota() {
   try {
     const info = await fetch("/api/info").then(r => r.json());
-    $("#quota").innerHTML = `Examples are instant · New questions: <b>${info.per_hour} per hour</b>, <b>${info.live_left_today}</b> left today`;
+    $("#quota").innerHTML = info.live
+      ? `Examples are instant · New questions: <b>${info.per_hour} per hour</b>, <b>${info.live_left_today}</b> left today`
+      : `New questions are switched off right now · The examples below still work`;
     return info;
   } catch { return null; }
 }

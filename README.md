@@ -49,6 +49,32 @@ repo ──► chunk ──► embed ──► chromadb ◄── search_code �
 Works with any OpenAI-compatible API. It defaults to Google Gemini's free tier and falls back to other
 models when one is rate-limited.
 
+## Web app
+
+**Live demo:** _add your Hugging Face Space link here_
+
+A FastAPI backend streams the agent's steps to the browser as they happen (Server-Sent Events). The
+page draws every file in the repo as a bar, then marks where the agent searched, what it read and which
+lines it cited. Each citation is checked against the repo live, so a made-up file shows up as
+"not in repo". A second tab shows the before/after eval results question by question.
+
+Running it publicly on a free API key needed some guardrails ([web/guard.py](web/guard.py)):
+- **Answer cache.** Repeat questions replay their recorded steps at speed: instant, and no API calls.
+  It's pre-seeded with the 20 eval questions, so every example works even when the quota is gone.
+- **Limits.** 5 new questions per visitor per hour, 60 per day overall, 2 running at once. Cached
+  questions never count.
+- **Fails clearly.** Without an API key, or once the quota is used, new questions are turned away with
+  a clear message and the examples keep working.
+
+```bash
+.venv/bin/uvicorn web.app:app --reload        # then open http://127.0.0.1:8000
+```
+
+**Deploying** ([deploy/huggingface/](deploy/huggingface/)): the Space needs only a Dockerfile and a
+README. At build time the image clones this repo, clones the target repo pinned to the commit the eval
+measured, and builds the index, so the published numbers, the cached answers and the live index all
+describe the same code. The API key is a Space secret, never part of the image.
+
 ## Evaluation
 
 Target repo: [Signal-stockwatchlist](https://github.com/h4rshini/Signal-stockwatchlist), a FastAPI +
@@ -161,5 +187,7 @@ OpenAI-compatible endpoint works).
 ```
 codeqa/   indexer.py  tools.py  agent.py  schemas.py  tracing.py  config.py
 evals/    questions.yaml  run_eval.py  scoring.py  results/   (reports + per-question JSONL)
+web/      app.py (API)  guard.py (cache + limits)  static/index.html  seed_cache.json
+deploy/   huggingface/  (Dockerfile + Space README)
 tests/    offline tests with a fake LLM client
 ```
