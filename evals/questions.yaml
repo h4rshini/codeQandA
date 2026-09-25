@@ -1,0 +1,201 @@
+# Ground-truth Q&A for the Signal-stockwatchlist repo.
+#
+# Fields:
+#   id               stable id (used for resuming runs and naming traces)
+#   type             locate | config | explain | cross-file | negative
+#   question         what the agent is asked
+#   expected_files   repo-relative paths; a correct answer cites at least one of them.
+#                    [] = nothing to cite (negative questions); citation check is skipped.
+#   must_mention     keywords the answer must contain (case-insensitive, whole word).
+#                    "a|b" means either alternative counts.
+#   reference_answer ground truth the LLM judge compares against. Written from the CODE,
+#                    not the docs; where they disagree, the code wins.
+
+repo: Signal-stockwatchlist
+
+questions:
+  - id: q01
+    type: locate
+    question: Where are user passwords hashed, and which library is used?
+    expected_files: [backend/app/security.py]
+    must_mention: [bcrypt, hash_password]
+    reference_answer: >
+      In backend/app/security.py. hash_password uses bcrypt.hashpw with bcrypt.gensalt();
+      verify_password checks with bcrypt.checkpw.
+
+  - id: q02
+    type: config
+    question: How long are login tokens valid, and what algorithm signs them?
+    expected_files: [backend/app/security.py]
+    must_mention: ["7|seven", HS256]
+    reference_answer: >
+      Tokens are JWTs signed with HS256 using settings.jwt_secret, and expire after
+      7 days (TOKEN_TTL = timedelta(days=7)), set in create_access_token.
+
+  - id: q03
+    type: explain
+    question: What happens when a request to a protected endpoint has a missing or invalid auth token?
+    expected_files: [backend/app/deps.py, backend/app/security.py]
+    must_mention: ["401|unauthorized"]
+    reference_answer: >
+      get_current_user in deps.py decodes the bearer token with decode_token, which returns None
+      for a missing, expired or tampered token. It then raises HTTP 401 "invalid or missing token".
+      It also returns 401 if the token is valid but the user no longer exists.
+
+  - id: q04
+    type: explain
+    question: Why does login return the same error whether the email or the password is wrong?
+    expected_files: [backend/app/auth.py]
+    must_mention: ["401|invalid credentials", "leak|leaking|reveal|enumeration"]
+    reference_answer: >
+      To avoid leaking which one was wrong (whether an account exists). The login endpoint in
+      auth.py returns 401 "invalid credentials" in both cases.
+
+  - id: q05
+    type: cross-file
+    question: How many signals must fire for a stock to be flagged, and what are the signals?
+    expected_files: [backend/app/engine.py, backend/app/signals.py]
+    must_mention: ["2|two", price, volume, "index|index_relative|market"]
+    reference_answer: >
+      At least two (CO_OCCURRENCE_MIN = 2 in engine.py) of three signals: price_move,
+      volume and index_relative. A single signal alone is treated as noise.
+
+  - id: q06
+    type: config
+    question: What decides whether a flag is high confidence or medium confidence?
+    expected_files: [backend/app/engine.py, backend/app/config.py]
+    must_mention: ["3.0|3", "score|strength"]
+    reference_answer: >
+      The score is the sum of the strengths of the fired signals. It is "high" if the score is
+      >= settings.high_confidence_score (3.0), otherwise "medium". The minimum flagged score is 2.0.
+
+  - id: q07
+    type: explain
+    question: How is the price move signal computed?
+    expected_files: [backend/app/signals.py]
+    must_mention: ["standard deviation|stdev|sigma|volatility", "2.0|2"]
+    reference_answer: >
+      price_move_signal computes daily returns from closes. It takes the standard deviation of all
+      but the latest return as the baseline volatility, then measures ratio = |today's return| / sigma.
+      It fires if the ratio >= price_sigma_threshold (2.0). It needs at least min_baseline_days + 2 closes
+      and doesn't fire on a flat history (sigma < 1e-9). Strength = ratio / threshold.
+
+  - id: q08
+    type: explain
+    question: How does the volume signal decide that a day's trading volume is unusual?
+    expected_files: [backend/app/signals.py]
+    must_mention: ["average|mean", "2.0|2"]
+    reference_answer: >
+      volume_signal divides today's volume by the mean of the previous volumes in the baseline, and
+      fires if that ratio >= volume_ratio_threshold (2.0). It needs at least min_baseline_days + 1 values
+      and doesn't fire if the average is <= 0.
+
+  - id: q09
+    type: explain
+    question: What does the index-relative signal do if market index data isn't available for that day?
+    expected_files: [backend/app/signals.py, backend/app/engine.py]
+    must_mention: ["fire|fired"]
+    reference_answer: >
+      It simply doesn't fire. index_return_for in engine.py returns None if SPY is missing or has no bar
+      on the same date, and index_relative_signal returns fired=False when index_return is None.
+      The other two signals still work.
+
+  - id: q10
+    type: config
+    question: Which ticker symbol is used as the market proxy?
+    expected_files: [backend/app/config.py]
+    must_mention: [SPY]
+    reference_answer: SPY, set as index_symbol in backend/app/config.py.
+
+  - id: q11
+    type: cross-file
+    question: How many recent daily bars does the engine use as a stock's baseline, and how many days of bars does the fetcher request?
+    expected_files: [backend/app/config.py, backend/app/engine.py, backend/app/fetcher.py]
+    must_mention: ["30", "35"]
+    reference_answer: >
+      The engine uses the latest settings.baseline_bars = 30 bars (evaluate_instrument). The fetcher
+      requests 35 days by default (fetch_daily_bars / refresh_symbol days=35).
+
+  - id: q12
+    type: locate
+    question: When does the scheduled daily data refresh run?
+    expected_files: [backend/app/scheduler.py]
+    must_mention: ["22|22:00|10 pm|10pm", "mon-fri|weekday|weekdays|monday"]
+    reference_answer: >
+      An APScheduler cron job in scheduler.py runs Monday to Friday at 22:00 server-local time
+      and calls refresh_watched.
+
+  - id: q13
+    type: explain
+    question: During the daily refresh, what happens if fetching data for one stock fails?
+    expected_files: [backend/app/refresh.py]
+    must_mention: ["FetchError|error|errors", "continue|continues|skip|skipped|skips"]
+    reference_answer: >
+      refresh_watched catches FetchError per instrument, increments an error count and moves on to the
+      next instrument, so one failure doesn't abort the run. A failure refreshing SPY is ignored too.
+      It returns counts of instruments, fetched, flagged and errors.
+
+  - id: q14
+    type: explain
+    question: When a user adds a ticker to their watchlist, when is its price data fetched?
+    expected_files: [backend/app/watchlist.py]
+    must_mention: [background]
+    reference_answer: >
+      After the response. add_ticker commits the watchlist row, then schedules backfill_symbol as a
+      FastAPI BackgroundTask. That task fetches bars (refresh_symbol) and evaluates the instrument
+      once. A fetch failure just leaves the row empty until a later refresh.
+
+  - id: q15
+    type: locate
+    question: What HTTP status code is returned if a user adds a ticker that's already in their watchlist?
+    expected_files: [backend/app/watchlist.py]
+    must_mention: ["409"]
+    reference_answer: 409 Conflict ("already in watchlist"), raised in add_ticker in watchlist.py.
+
+  - id: q16
+    type: explain
+    question: How does the feed decide how far back to show flags for a returning user?
+    expected_files: [backend/app/feed.py]
+    must_mention: ["30", "last_seen|last_seen_at|last seen"]
+    reference_answer: >
+      _window_days in feed.py uses the number of days since the user's last_seen_at, capped at
+      lookback_cap_days (30). If last_seen_at is None it uses 30. Flags with window_end >= today minus
+      that window are shown.
+
+  - id: q17
+    type: explain
+    question: Does loading the feed update the user's last-seen timestamp?
+    expected_files: [backend/app/feed.py]
+    must_mention: ["no|not|doesn't|does not", "seen|mark_seen"]
+    reference_answer: >
+      No. GET /feed only reads. last_seen_at is updated only by POST /seen (mark_seen),
+      i.e. when the user explicitly marks the feed as reviewed.
+
+  - id: q18
+    type: explain
+    question: If the fetcher re-fetches a daily bar that's already stored, is the stored bar updated with the new values?
+    expected_files: [backend/app/fetcher.py]
+    must_mention: ["skip|skipped|skips|not updated|isn't updated|no"]
+    reference_answer: >
+      No. store_bars loads the bar_dates already stored for the instrument and skips any bar with an
+      existing date, so existing bars are never updated. (The comment in models.py and ARCHITECTURE.md
+      claim a re-fetch updates the bar, but the code doesn't.)
+
+  - id: q19
+    type: explain
+    question: How does the fetcher avoid leaking the data provider's API key in error messages?
+    expected_files: [backend/app/fetcher.py]
+    must_mention: ["from None|chain|chaining|chained", "URL|url"]
+    reference_answer: >
+      The API key is sent in the request URL. The fetcher catches httpx errors and raises a clean
+      FetchError "from None", so the original exception, whose message contains the URL and key,
+      isn't chained into logs or responses.
+
+  - id: q20
+    type: negative
+    question: Does the backend use Redis or another caching layer?
+    expected_files: []
+    must_mention: ["no|not|doesn't|does not"]
+    reference_answer: >
+      No. There's no Redis or separate cache. Computed flags are stored in the change_events table
+      and the feed reads them straight from the database.
