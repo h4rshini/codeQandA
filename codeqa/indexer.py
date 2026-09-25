@@ -114,7 +114,11 @@ def split_to_budget(chunk: Chunk, count_tokens, budget: int) -> list[Chunk]:
 def token_counter():
     """Count tokens with the same tokenizer the embedder uses, without truncation."""
     from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
-    tok = ONNXMiniLM_L6_V2().tokenizer
+    ef = ONNXMiniLM_L6_V2()
+    # The model (and its tokenizer file) is only downloaded on first use, and reading
+    # `.tokenizer` doesn't count as use. Embed once so a fresh machine has the files.
+    ef(["warm-up"])
+    tok = ef.tokenizer
     tok.no_truncation()
     tok.no_padding()
     return lambda text: len(tok.encode(text).ids)
