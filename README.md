@@ -1,5 +1,7 @@
 # codeQandA: a codebase Q&A agent with an eval harness
 
+[![CI](https://github.com/h4rshini/codeQandA/actions/workflows/ci.yml/badge.svg)](https://github.com/h4rshini/codeQandA/actions/workflows/ci.yml)
+
 Ask a question about a codebase in plain English ("How are price signals computed?") and get back a
 **structured, cited answer**: which files and line ranges support it, plus how confident the agent is.
 An **evaluation harness** then measures whether those answers are actually correct and whether any
@@ -78,7 +80,8 @@ Running it publicly on a free API key needed some guardrails ([web/guard.py](web
 and the [Dockerfile](Dockerfile) builds it. At build time the image clones the target repo pinned to
 the commit the eval measured and builds the index, so the published numbers, the cached answers and
 the live index all describe the same code. The API key is a Render secret, never part of the image
-([.dockerignore](.dockerignore) keeps `.env` out). Every push to `main` redeploys. The free instance
+([.dockerignore](.dockerignore) keeps `.env` out). GitHub Actions runs the test suite on every push
+([ci.yml](.github/workflows/ci.yml)), and Render redeploys only once CI passes. The free instance
 has 512 MB RAM (the app peaks around 380 MB) and sleeps after 15 idle minutes, so the first visit
 after a quiet spell takes about a minute.
 
@@ -172,6 +175,9 @@ OpenAI-compatible endpoint works).
   doesn't exist is kept and counted by the eval. Rejecting it would hide the hallucination.
 - **Two accuracy measures.** An LLM judge alone can be fooled by fluent text; keyword matching alone
   penalizes valid paraphrases. Reporting both, plus how often they agree, shows where each is wrong.
+- **Tests run anywhere.** The suite uses a fake LLM client and a fake repo and index, so it needs no
+  API key, network or local index, which is what lets CI run it on a fresh machine.
+- **No third-party reporting.** Chroma's anonymous usage telemetry is switched off.
 - **The eval is resumable, and answering is separate from grading.** Results are appended per question,
   so `--resume <run_id>` picks up after a quota stop, and `--rescore <run_id>` re-grades saved answers when
   the scoring rules change, without re-running the agent.

@@ -10,10 +10,27 @@ from codeqa.schemas import AgentAnswer
 from web import app as web
 
 
+class _FakeCollection:
+    metadata = {"repo_url": "https://github.com/example/demo"}
+
+    def count(self):
+        return 3
+
+
 @pytest.fixture
 def client(monkeypatch, tmp_path):
+    """A self-contained app: tiny fake repo and index, API key 'present', fresh limits.
+    Nothing depends on the developer's .env or local chromadb index (so it runs in CI)."""
+    from codeqa import tools
     from web.guard import AnswerCache, DailyCap, RateLimiter
-    monkeypatch.setattr(config, "TRACE_DIR", tmp_path)
+    repo = tmp_path / "demo"
+    repo.mkdir()
+    (repo / "a.py").write_text("def f():\n    return 1\n")
+    monkeypatch.setattr(tools, "repo_root", lambda: repo)
+    monkeypatch.setattr(web, "repo_root", lambda: repo)
+    monkeypatch.setattr(web, "_collection", lambda: _FakeCollection())
+    monkeypatch.setattr(web, "LIVE", True)
+    monkeypatch.setattr(config, "TRACE_DIR", tmp_path / "traces")
     # fresh limits per test; empty cache so questions really reach the (fake) agent
     monkeypatch.setattr(web, "cache", AnswerCache())
     monkeypatch.setattr(web, "limiter", RateLimiter(100))
@@ -65,6 +82,8 @@ def test_question_length_is_validated(client):
 
 
 def test_source_is_sandboxed(client):
+    ok = client.get("/api/source", params={"path": "a.py", "start": 1, "end": 2})
+    assert ok.status_code == 200 and ok.json()["lines"] == ["def f():", "    return 1"]
     assert client.get("/api/source", params={"path": "../../etc/passwd", "start": 1, "end": 3}).status_code == 404
 
 

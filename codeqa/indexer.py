@@ -141,7 +141,9 @@ def chunk_file(root: Path, file: Path):
 # ---------- storage ----------
 
 def get_client():
-    return chromadb.PersistentClient(path=str(config.CHROMA_DIR))
+    # Chroma sends anonymous usage telemetry by default; this app doesn't report to third parties.
+    return chromadb.PersistentClient(path=str(config.CHROMA_DIR),
+                                     settings=chromadb.Settings(anonymized_telemetry=False))
 
 
 def get_collection():

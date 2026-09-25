@@ -6,7 +6,7 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/info
-    autoDeployTrigger: commit  # redeploy on every push to main
+    autoDeployTrigger: checksPass  # redeploy on push to main, only once CI passes
     envVars:
       - key: GEMINI_API_KEY
         sync: false            # secret: entered in the dashboard, never stored in the repo
