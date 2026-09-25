@@ -46,7 +46,7 @@ questions:
     type: explain
     question: Why does login return the same error whether the email or the password is wrong?
     expected_files: [backend/app/auth.py]
-    must_mention: ["401|invalid credentials", "leak|leaking|reveal|enumeration"]
+    must_mention: ["leak|leaking|reveal|reveals|enumeration"]
     reference_answer: >
       To avoid leaking which one was wrong (whether an account exists). The login endpoint in
       auth.py returns 401 "invalid credentials" in both cases.

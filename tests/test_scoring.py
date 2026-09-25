@@ -26,6 +26,7 @@ def test_keywords_whole_word_with_alternatives():
     assert keyword_check("uses POST /seen", ["/seen"])["ok"]
     assert keyword_check("threshold is 3.0", ["3.0|3"])["ok"]
     assert not keyword_check("the note says so", ["no"])["ok"]      # "no" inside "note" doesn't count
+    assert keyword_check("uses price_move and volume", ["price"])["ok"]  # identifiers count
     assert keyword_check("x", ["a", "x"])["missing"] == ["a"]
 
 

@@ -29,8 +29,9 @@ def citation_match(cited: list[dict], expected: list[str]) -> dict:
 
 
 def _contains(text: str, keyword: str) -> bool:
-    # Whole-word, case-insensitive; lookarounds (not \b) so keywords like "/seen" or "3.0" work.
-    return re.search(rf"(?<!\w){re.escape(keyword)}(?!\w)", text, re.IGNORECASE) is not None
+    # Whole-word, case-insensitive. Boundaries are letters/digits only (not \b), so "/seen" and "3.0"
+    # work and "price" matches inside the identifier "price_move", but "no" doesn't match "note".
+    return re.search(rf"(?<![A-Za-z0-9]){re.escape(keyword)}(?![A-Za-z0-9])", text, re.IGNORECASE) is not None
 
 
 def keyword_check(answer: str, must_mention: list[str]) -> dict:
@@ -99,7 +100,10 @@ def summarize(rows: list[dict], use_judge: bool) -> dict:
 def render_report(s: dict, rows: list[dict], meta: dict) -> str:
     n = s["questions"] - s["errors"]
     out = [f"# Eval report: {meta['run_id']}", "",
-           f"Repo: `{meta['repo']}` | Model: `{meta['model']}` | Questions: {s['questions']}"
+           f"Repo: `{meta['repo']}` ({meta['chunks']} chunks indexed) | Model: `{meta['model']}`"
+           + (f" (fallbacks: {', '.join(meta['fallbacks'])})" if meta["fallbacks"] else " (pinned)")
+           + (f" | Judge: `{meta['judge_model']}`" if meta.get("judge_model") else "")
+           + f" | Questions: {s['questions']}"
            + (f" ({s['errors']} errored)" if s["errors"] else ""), "",
            "## Headline", "",
            "| Metric | Value | Meaning |", "|---|---|---|"]
