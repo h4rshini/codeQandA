@@ -7,6 +7,7 @@ Usage: python -m codeqa.agent "How are passwords hashed?"
 import json
 import re
 import sys
+import threading
 import time
 
 from openai import APIStatusError, OpenAI
@@ -37,16 +38,18 @@ class AllModelsExhausted(RuntimeError):
 
 _exhausted: set[str] = set()  # models that hit their DAILY quota this process; skip them
 _last_call = 0.0
+_pace_lock = threading.Lock()  # the web server runs several agents in threads sharing one quota
 
 
 def _pace():
     """Space requests out so we stay under the provider's requests-per-minute limit."""
     global _last_call
-    if config.LLM_RPM > 0:
-        wait = _last_call + 60 / config.LLM_RPM - time.monotonic()
-        if wait > 0:
-            time.sleep(wait)
-    _last_call = time.monotonic()
+    with _pace_lock:
+        if config.LLM_RPM > 0:
+            wait = _last_call + 60 / config.LLM_RPM - time.monotonic()
+            if wait > 0:
+                time.sleep(wait)
+        _last_call = time.monotonic()
 
 
 def _per_minute_delay(e: APIStatusError) -> float | None:

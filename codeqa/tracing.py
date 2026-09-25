@@ -35,19 +35,25 @@ def _summarize(name: str, result: dict) -> str:
 
 
 class Tracer:
-    def __init__(self, question: str, trace_dir: Path | None = None, run_id: str | None = None):
+    def __init__(self, question: str, trace_dir: Path | None = None, run_id: str | None = None,
+                 on_event=None):
+        """on_event: optional callback receiving each event dict as it's logged (used for live streaming)."""
         trace_dir = Path(trace_dir or config.TRACE_DIR)
         trace_dir.mkdir(parents=True, exist_ok=True)
         slug = re.sub(r"[^a-z0-9]+", "-", question.lower()).strip("-")[:40]
-        name = run_id or f"{datetime.now():%Y%m%d-%H%M%S}-{slug}"
+        # Microseconds keep names unique when a web server handles simultaneous questions.
+        name = run_id or f"{datetime.now():%Y%m%d-%H%M%S-%f}-{slug}"
         self.path = trace_dir / f"{name}.jsonl"
         self._f = self.path.open("w", encoding="utf-8")
         self._t0 = time.perf_counter()
+        self._on_event = on_event
 
     def log(self, type: str, **fields):
         event = {"type": type, "t_ms": round((time.perf_counter() - self._t0) * 1000), **fields}
         self._f.write(json.dumps(event, default=str) + "\n")
         self._f.flush()
+        if self._on_event:
+            self._on_event(event)
 
     def close(self):
         self._f.close()

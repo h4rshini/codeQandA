@@ -3,3 +3,5 @@ openai>=1.40
 pyyaml>=6.0
 pytest>=8
 python-dotenv>=1.0
+fastapi>=0.115
+uvicorn>=0.30
