@@ -32,7 +32,7 @@ def iter_files(root: Path):
         rel = p.relative_to(root)
         if any(part in config.SKIP_DIRS or part.startswith(".") for part in rel.parts[:-1]):
             continue
-        if p.is_file() and p.suffix in config.TEXT_EXTS and p.stat().st_size <= config.MAX_FILE_BYTES:
+        if p.is_file() and p.name not in config.SKIP_FILES and p.suffix in config.TEXT_EXTS and p.stat().st_size <= config.MAX_FILE_BYTES:
             yield p
 
 

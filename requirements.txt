@@ -2,3 +2,4 @@ chromadb>=0.5
 openai>=1.40
 pyyaml>=6.0
 pytest>=8
+python-dotenv>=1.0
