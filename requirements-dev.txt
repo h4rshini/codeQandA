@@ -1,0 +1,4 @@
+# Dev-only tools (not needed to run the app)
+-r requirements.txt
+playwright>=1.45
+pillow>=10

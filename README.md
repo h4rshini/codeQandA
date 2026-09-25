@@ -5,6 +5,10 @@ Ask a question about a codebase in plain English ("How are price signals compute
 An **evaluation harness** then measures whether those answers are actually correct and whether any
 citation was made up.
 
+**[Try the live demo](https://codeqanda.onrender.com)** · [How accurate is it?](#evaluation)
+
+![The agent answering a question: each bar is a file in the repo; bars light up where it searches and reads, cited lines turn yellow, and the answer shows the exact code it came from.](docs/demo.gif)
+
 ## The problem
 
 LLMs are good at explaining code they can see, and bad at admitting what they can't see. Ask one about
@@ -153,6 +157,7 @@ echo "GEMINI_API_KEY=your-key" > .env       # free key: aistudio.google.com (nev
 .venv/bin/python -m evals.run_eval --model gemini-3.5-flash-lite      # 4. evaluate (resumable)
 .venv/bin/python -m evals.run_eval --rescore <run_id>                 #    re-grade saved answers
 .venv/bin/python -m pytest tests                                      # offline tests, no API calls
+.venv/bin/python scripts/record_demo.py                               # re-record docs/demo.gif (needs requirements-dev.txt)
 ```
 
 To use a different provider, set `LLM_BASE_URL`, `LLM_API_KEY` and `CODEQA_MODEL` in `.env` (any
