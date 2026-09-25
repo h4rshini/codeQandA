@@ -160,8 +160,12 @@ def source(path: str, start: int, end: int):
 @app.get("/api/info")
 def info():
     spec = yaml.safe_load((EVALS / "questions.yaml").read_text())
-    return {"repo": repo_root().name, "chunks": _collection().count(), "model": config.LLM_MODEL,
-            "examples": [q["question"] for q in spec["questions"]],
+    repo = repo_root().name
+    # The eval questions are about one specific repo; only offer them when that repo is loaded.
+    examples = [q["question"] for q in spec["questions"]] if spec.get("repo") == repo else []
+    return {"repo": repo, "repo_url": _collection().metadata.get("repo_url"),
+            "description": os.environ.get("CODEQA_REPO_DESCRIPTION", ""),
+            "chunks": _collection().count(), "model": config.LLM_MODEL, "examples": examples,
             "live": LIVE, "live_left_today": daily.remaining() if LIVE else 0, "per_hour": PER_HOUR}
 
 

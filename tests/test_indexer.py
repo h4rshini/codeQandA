@@ -55,3 +55,12 @@ def test_split_to_budget_handles_one_huge_line():
     text = "x " * 50 + "\nsmall"
     pieces = split_to_budget(Chunk("a.py", 1, 2, "f", text), lambda t: len(t.split()), budget=10)
     assert [(p.start_line, p.end_line) for p in pieces] == [(1, 1), (2, 2)]
+
+
+def test_other_languages_and_build_files_are_indexed_but_not_secrets(tmp_path):
+    from codeqa.indexer import iter_files
+    for name in ["main.go", "lib.rs", "App.java", "Dockerfile", "Makefile", ".env", "notes.bin", "package-lock.json"]:
+        (tmp_path / name).write_text("x = 1\n")
+    found = {p.name for p in iter_files(tmp_path)}
+    assert {"main.go", "lib.rs", "App.java", "Dockerfile", "Makefile"} <= found
+    assert not found & {".env", "notes.bin", "package-lock.json"}

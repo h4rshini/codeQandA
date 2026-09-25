@@ -4,6 +4,7 @@ Usage: python -m codeqa.indexer /path/to/repo
 """
 import argparse
 import ast
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -32,7 +33,7 @@ def iter_files(root: Path):
         rel = p.relative_to(root)
         if any(part in config.SKIP_DIRS or part.startswith(".") for part in rel.parts[:-1]):
             continue
-        if p.is_file() and p.name not in config.SKIP_FILES and p.suffix in config.TEXT_EXTS and p.stat().st_size <= config.MAX_FILE_BYTES:
+        if p.is_file() and p.name not in config.SKIP_FILES and (p.suffix in config.TEXT_EXTS or p.name in config.TEXT_NAMES) and p.stat().st_size <= config.MAX_FILE_BYTES:
             yield p
 
 
@@ -147,7 +148,19 @@ def get_collection():
     return get_client().get_collection(config.COLLECTION)
 
 
-def build_index(repo: Path) -> int:
+def _git_remote_url(repo: Path) -> str | None:
+    """The repo's web URL from its git remote, if it has one (for linking from the UI)."""
+    try:
+        url = subprocess.run(["git", "-C", str(repo), "remote", "get-url", "origin"],
+                             capture_output=True, text=True, timeout=5).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if url.startswith("git@github.com:"):
+        url = "https://github.com/" + url.removeprefix("git@github.com:")
+    return url.removesuffix(".git") if url.startswith("https://") else None
+
+
+def build_index(repo: Path, url: str | None = None) -> int:
     repo = repo.resolve()
     client = get_client()
     try:
@@ -155,10 +168,10 @@ def build_index(repo: Path) -> int:
     except Exception:
         pass
     # repo_root is stored on the collection so the tools know where files live.
-    col = client.create_collection(
-        config.COLLECTION,
-        metadata={"repo_root": str(repo), "hnsw:space": "cosine"},
-    )
+    metadata = {"repo_root": str(repo), "hnsw:space": "cosine"}
+    if url := url or _git_remote_url(repo):
+        metadata["repo_url"] = url
+    col = client.create_collection(config.COLLECTION, metadata=metadata)
 
     count = token_counter()
     chunks = [piece for f in iter_files(repo) for c in chunk_file(repo, f)
@@ -179,8 +192,9 @@ def build_index(repo: Path) -> int:
 def main():
     ap = argparse.ArgumentParser(description="Index a codebase into chromadb.")
     ap.add_argument("repo", type=Path)
+    ap.add_argument("--url", help="web URL of the repo, for links in the UI (default: its git remote)")
     args = ap.parse_args()
-    n = build_index(args.repo)
+    n = build_index(args.repo, args.url)
     print(f"Indexed {n} chunks from {args.repo.resolve()} into {config.CHROMA_DIR}")
 
 

@@ -51,7 +51,7 @@ models when one is rate-limited.
 
 ## Web app
 
-**Live demo:** _add your Render link here_ (free instance: the first visit after a quiet spell takes about a minute to wake up)
+**Live demo: [codeqanda.onrender.com](https://codeqanda.onrender.com)** (free instance: the first visit after a quiet spell takes about a minute to wake up)
 
 A FastAPI backend streams the agent's steps to the browser as they happen (Server-Sent Events). The
 page draws every file in the repo as a bar, then marks where the agent searched, what it read and which

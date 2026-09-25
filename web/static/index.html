@@ -308,13 +308,13 @@ footer { border-top: 1px solid var(--rule); margin-top: 24px; padding-top: 20px;
   <!-- ================= ASK ================= -->
   <section id="view-ask" role="tabpanel" aria-labelledby="tab-ask">
     <div class="wrap hero">
-      <p class="eyebrow">Reading <a id="repo-link" href="https://github.com/h4rshini/Signal-stockwatchlist">Signal-stockwatchlist</a>, a stock watchlist app · <span id="file-count">…</span> files</p>
+      <p class="eyebrow" id="repo-line">Loading the repository…</p>
       <h1>Ask about this codebase.</h1>
       <p class="lede">Every answer points to <span class="hl">the exact lines it came from.</span></p>
 
       <form class="ask" id="ask-form" autocomplete="off">
         <label for="q" class="sr-only">Your question about the code</label>
-        <input id="q" name="q" maxlength="300" placeholder="e.g. How does the app decide a stock is unusual?" required>
+        <input id="q" name="q" maxlength="300" placeholder="e.g. Where is the main entry point, and what does it do?" required>
         <button class="ask-btn" id="ask-btn" type="submit">Ask</button>
       </form>
       <p class="quota" id="quota"></p>
@@ -350,7 +350,7 @@ footer { border-top: 1px solid var(--rule); margin-top: 24px; padding-top: 20px;
   <!-- ================= RESULTS ================= -->
   <section id="view-results" role="tabpanel" aria-labelledby="tab-results" hidden>
     <div class="wrap results">
-      <p class="eyebrow">Evaluation · 20 questions with known answers</p>
+      <p class="eyebrow" id="results-eyebrow">Evaluation · 20 questions with known answers</p>
       <h1 id="results-h">How often it gets the answer right.</h1>
       <p class="lede">The agent answered the same 20 questions twice, before and after a fix to how the code is split up for search. Same model, same grading. Select a square to see the question and answer.</p>
 
@@ -411,27 +411,37 @@ document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () =>
 addEventListener("hashchange", () => show(location.hash === "#results" ? "results" : "ask"));
 
 /* ---------------- repo skyline ---------------- */
-function groupOf(path) {
-  if (path.startsWith("backend/app/")) return "backend/app";
-  if (path.startsWith("backend/tests/")) return "backend/tests";
-  if (path.startsWith("frontend/")) return "frontend";
-  return "docs & config";
+// Group files by top-level folder. If one folder holds most of the repo (a lone src/),
+// split it one level deeper so the skyline still shows structure. Small groups merge into "other".
+function groupFiles(list) {
+  const key = (p, depth) => { const parts = p.split("/"); return parts.length > depth ? parts.slice(0, depth).join("/") : "(root files)"; };
+  const byKey = new Map();
+  for (const f of list) { const k = key(f.path, 1); (byKey.get(k) || byKey.set(k, []).get(k)).push(f); }
+  const [bigKey, big] = [...byKey].sort((a, b) => b[1].length - a[1].length)[0] || [];
+  if (big && big.length > list.length * 0.6 && bigKey !== "(root files)") {
+    byKey.delete(bigKey);
+    for (const f of big) { const k = key(f.path, 2); const k2 = k === "(root files)" ? bigKey : k; (byKey.get(k2) || byKey.set(k2, []).get(k2)).push(f); }
+  }
+  let groups = [...byKey].map(([name, files]) => ({ name, files })).sort((a, b) => b.files.length - a.files.length);
+  if (groups.length > 8) {
+    const rest = groups.slice(7).flatMap(g => g.files);
+    groups = [...groups.slice(0, 7), { name: "other", files: rest }];
+  }
+  // keep "(root files)" last: it's usually docs and config
+  return groups.sort((a, b) => (a.name === "(root files)") - (b.name === "(root files)"));
 }
 function drawSkyline(list) {
-  const order = ["backend/app", "backend/tests", "frontend", "docs & config"];
   const max = Math.sqrt(Math.max(...list.map(f => f.lines)));
   const sky = $("#skyline");
   const box = sky.clientHeight - 22;
   let i = 0;
-  for (const g of order) {
-    const members = list.filter(f => groupOf(f.path) === g);
-    if (!members.length) continue;
+  for (const g of groupFiles(list)) {
     const group = document.createElement("div");
     group.className = "group";
-    group.style.flex = `${members.length} 1 0`;
+    group.style.flex = `${g.files.length} 1 0`;
     const bars = document.createElement("div");
     bars.className = "group-bars";
-    for (const f of members) {
+    for (const f of g.files.sort((a, b) => a.path.localeCompare(b.path))) {
       const bar = document.createElement("span");
       bar.className = "bar";
       bar.style.setProperty("--h", `${Math.max(6, Math.sqrt(f.lines) / max * box)}px`);
@@ -442,7 +452,7 @@ function drawSkyline(list) {
     }
     const name = document.createElement("span");
     name.className = "group-name";
-    name.textContent = `${g} (${members.length})`;
+    name.textContent = `${g.name} (${g.files.length})`;
     group.append(bars, name);
     sky.append(group);
   }
@@ -470,6 +480,8 @@ function clearMarks() {
 /* ---------------- examples ---------------- */
 function renderExamples() {
   const box = $("#examples");
+  box.hidden = !examples.length;
+  if (!examples.length) return;
   box.querySelectorAll(".chip").forEach(c => c.remove());
   const pick = [...examples].sort(() => Math.random() - 0.5).slice(0, 3);
   pick.forEach((q, i) => {
@@ -593,7 +605,7 @@ async function ask(question) {
   $("#run").hidden = false;
   $("#steps").innerHTML = ""; $("#step-count").textContent = ""; $("#conf-slot").innerHTML = "";
   $("#question-echo").textContent = question;
-  $("#answer-body").innerHTML = `<div class="skeleton"><i></i><i></i><i></i></div><p class="waiting-note">Answers usually take 20–60 seconds. The steps on the left update as the agent works.</p>`;
+  $("#answer-body").innerHTML = `<div class="skeleton"><i></i><i></i><i></i></div><p class="waiting-note">New questions take 1–2 minutes on this free server. The steps on the left update as the agent works.</p>`;
   $("#sources").hidden = true;
   pendingRow("Reading the question");
   t0 = performance.now(); timer = setInterval(tick, 500); tick();
@@ -634,9 +646,11 @@ async function ask(question) {
 async function refreshQuota() {
   try {
     const info = await fetch("/api/info").then(r => r.json());
+    const hasEx = info.examples.length > 0;
     $("#quota").innerHTML = info.live
-      ? `Examples are instant · New questions: <b>${info.per_hour} per hour</b>, <b>${info.live_left_today}</b> left today`
-      : `New questions are switched off right now · The examples below still work`;
+      ? `${hasEx ? "Examples are instant · " : ""}New questions: <b>${info.per_hour} per hour</b>, <b>${info.live_left_today}</b> left today`
+      : hasEx ? `New questions are switched off right now · The examples below still work`
+              : `New questions are switched off on this server right now`;
     return info;
   } catch { return null; }
 }
@@ -680,6 +694,7 @@ async function loadResults() {
   const a = runs[0].summary, b = runs[runs.length - 1].summary;
   const pct = (n, d) => d ? Math.round(100 * n / d) : 0;
   const n = s => s.questions - s.errors;
+  $("#results-eyebrow").textContent = `Evaluation on ${b.repo} · ${n(b)} questions with known answers`;
   if (runs.length > 1 && b.strict_correct > a.strict_correct)
     $("#results-h").textContent = `One bug fix took strict accuracy from ${pct(a.strict_correct, n(a))}% to ${pct(b.strict_correct, n(b))}%.`;
   const rows = [
@@ -702,9 +717,12 @@ async function loadResults() {
   show(location.hash === "#results" ? "results" : "ask");
   try {
     const [info, list] = await Promise.all([refreshQuota(), fetch("/api/files").then(r => r.json())]);
-    $("#file-count").textContent = list.length;
+    const name = info.repo_url ? `<a href="${esc(info.repo_url)}">${esc(info.repo)}</a>` : esc(info.repo);
+    $("#repo-line").innerHTML = `Reading ${name}${info.description ? `, ${esc(info.description)}` : ""} · ${list.length} files`;
+    document.title = `codeQandA · ${info.repo}`;
     $("#model-note").textContent = `Model: ${info.model}`;
     examples = info.examples;
+    if (examples.length) $("#q").placeholder = `e.g. ${examples[0]}`;
     renderExamples();
     drawSkyline(list);
   } catch {

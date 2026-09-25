@@ -35,5 +35,14 @@ SPLIT_OVERLAP_LINES = 3
 SKIP_DIRS = {".git", ".venv", "venv", "env", "node_modules", "__pycache__", ".chroma",
              "dist", "build", ".mypy_cache", ".pytest_cache", ".idea", ".vscode", "traces"}
 SKIP_FILES = {"package-lock.json", "yarn.lock", "pnpm-lock.yaml", "poetry.lock", "uv.lock"}
-TEXT_EXTS = {".py", ".md", ".txt", ".toml", ".cfg", ".ini", ".yaml", ".yml", ".json",
-             ".js", ".ts", ".tsx", ".jsx", ".html", ".css", ".sh", ".sql", ".rst"}
+TEXT_EXTS = {
+    # Python gets AST chunking; everything else is split into token-budgeted line windows.
+    ".py",
+    ".js", ".mjs", ".cjs", ".ts", ".tsx", ".jsx", ".vue", ".svelte", ".html", ".css", ".scss",
+    ".java", ".kt", ".kts", ".scala", ".go", ".rs", ".c", ".h", ".cc", ".cpp", ".hpp", ".cs",
+    ".rb", ".php", ".swift", ".m", ".dart", ".lua", ".r", ".jl", ".ex", ".exs", ".hs", ".ml",
+    ".sh", ".sql", ".proto", ".graphql", ".tf",
+    ".md", ".rst", ".txt", ".toml", ".cfg", ".ini", ".yaml", ".yml", ".json",
+}
+# Extension-less files worth indexing. (.env and other secrets never match: no listed extension.)
+TEXT_NAMES = {"Dockerfile", "Makefile", "Procfile", "Gemfile", "Rakefile"}
