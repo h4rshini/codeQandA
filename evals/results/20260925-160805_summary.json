@@ -1,0 +1,27 @@
+{
+  "questions": 20,
+  "errors": 0,
+  "strict_correct": 16,
+  "citation_hits": 18,
+  "citation_questions": 19,
+  "keywords_ok": 17,
+  "hallucinated_citations": 0,
+  "total_citations": 30,
+  "questions_with_hallucination": 0,
+  "judge_correct": 17,
+  "judge_partial": 3,
+  "judge_strict_agree": 19,
+  "calibration": {
+    "high": {
+      "n": 20,
+      "correct": 17
+    }
+  },
+  "calibration_basis": "judge",
+  "run_id": "20260925-160805",
+  "repo": "Signal-stockwatchlist",
+  "model": "gemini-3.5-flash-lite",
+  "fallbacks": [],
+  "chunks": 205,
+  "judge_model": "gemini-3.5-flash-lite"
+}
