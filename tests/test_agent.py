@@ -37,8 +37,9 @@ class FakeClient:
 
 
 @pytest.fixture(autouse=True)
-def _reset_exhausted():
+def _isolate(monkeypatch, tmp_path):
     agent._exhausted.clear()
+    monkeypatch.setattr(config, "TRACE_DIR", tmp_path)  # keep test traces out of traces/
 
 
 def test_tool_result_is_fed_back_then_structured_answer(monkeypatch):
@@ -54,7 +55,7 @@ def test_tool_result_is_fed_back_then_structured_answer(monkeypatch):
 def test_bad_json_arguments_become_an_error_not_a_crash():
     client = FakeClient([_msg(tool_calls=[_call("read_file", "{not json")]),
                          _msg(content="ok"), _msg(content=FINAL)])
-    agent.run_agent("q", client=client, verbose=True)
+    agent.run_agent("q", client=client)
     assert "invalid JSON" in client.seen[1][-1]["content"]
 
 
@@ -83,3 +84,25 @@ def test_quota_exhausted_model_is_skipped_afterwards(monkeypatch):
     agent.complete(client, messages=[])
     agent.complete(client, messages=[])
     assert client.models == ["main", "backup", "backup"]
+
+
+def test_trace_records_every_event(monkeypatch):
+    from codeqa.tracing import Tracer
+    monkeypatch.setattr(agent, "execute_tool", lambda name, args: {"error": "boom"})
+    client = FakeClient([_msg(content="checking the root", tool_calls=[_call("list_files", '{"directory": "."}')]),
+                         _msg(content="done"), _msg(content=FINAL)])
+    tracer = Tracer("q")
+    agent.run_agent("q", client=client, tracer=tracer)
+    events = [json.loads(line) for line in tracer.path.read_text().splitlines()]
+    assert [e["type"] for e in events] == ["start", "llm_call", "tool_call", "llm_call", "llm_call", "final"]
+    assert events[1]["reasoning"] == "checking the root"
+    assert events[2]["name"] == "list_files" and events[2]["error"] == "boom"
+    assert events[-1]["answer"]["answer"] == "done"
+
+
+def test_failed_run_still_leaves_a_trace():
+    from codeqa.tracing import Tracer
+    tracer = Tracer("q")
+    with pytest.raises(APIStatusError):
+        agent.run_agent("q", client=FakeClient([_err(500)]), tracer=tracer)
+    assert json.loads(tracer.path.read_text().splitlines()[-1])["type"] == "error"
