@@ -92,6 +92,34 @@ def python_chunks(path: str, source: str):
         cursor = max(cursor, e + 1)
 
 
+def split_to_budget(chunk: Chunk, count_tokens, budget: int) -> list[Chunk]:
+    """Split a chunk by lines so each piece fits the embedder's token budget."""
+    if count_tokens(chunk.text) <= budget:
+        return [chunk]
+    lines = chunk.text.splitlines()
+    pieces, i = [], 0
+    while i < len(lines):
+        j = i + 1  # always take at least one line, even if that line alone is over budget
+        while j < len(lines) and count_tokens("\n".join(lines[i:j + 1])) <= budget:
+            j += 1
+        text = "\n".join(lines[i:j])
+        if text.strip():
+            pieces.append(Chunk(chunk.path, chunk.start_line + i, chunk.start_line + j - 1, chunk.symbol, text))
+        if j >= len(lines):
+            break
+        i = max(j - config.SPLIT_OVERLAP_LINES, i + 1)
+    return pieces
+
+
+def token_counter():
+    """Count tokens with the same tokenizer the embedder uses, without truncation."""
+    from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
+    tok = ONNXMiniLM_L6_V2().tokenizer
+    tok.no_truncation()
+    tok.no_padding()
+    return lambda text: len(tok.encode(text).ids)
+
+
 def chunk_file(root: Path, file: Path):
     rel = file.relative_to(root).as_posix()
     try:
@@ -128,7 +156,9 @@ def build_index(repo: Path) -> int:
         metadata={"repo_root": str(repo), "hnsw:space": "cosine"},
     )
 
-    chunks = [c for f in iter_files(repo) for c in chunk_file(repo, f)]
+    count = token_counter()
+    chunks = [piece for f in iter_files(repo) for c in chunk_file(repo, f)
+              for piece in split_to_budget(c, count, config.MAX_CHUNK_TOKENS)]
     batch = 200
     for i in range(0, len(chunks), batch):
         part = chunks[i:i + batch]

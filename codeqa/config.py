@@ -18,12 +18,19 @@ JUDGE_MODEL = os.environ.get("CODEQA_JUDGE_MODEL", LLM_MODEL)
 # Tried in order if the main model is overloaded (free tier returns 503/429 under load).
 FALLBACK_MODELS = [m for m in os.environ.get(
     "CODEQA_FALLBACK_MODELS", "gemini-3.5-flash,gemini-flash-lite-latest").split(",") if m]
+# Client-side request pacing. Gemini's free tier allows 15 requests/minute per model; stay under it.
+# Set CODEQA_RPM=0 to disable (e.g. on a paid key).
+LLM_RPM = float(os.environ.get("CODEQA_RPM", "12"))
 
 # Chunking
 WINDOW_LINES = 60        # fallback window size for non-Python / module-level code
 WINDOW_OVERLAP = 10
 MAX_CHUNK_LINES = 150    # classes longer than this are split per-method
 MAX_FILE_BYTES = 200_000
+# The local embedder (all-MiniLM-L6-v2) only reads the first 256 tokens of a chunk;
+# anything past that is invisible to search. Keep chunks under budget (leaves room for the header).
+MAX_CHUNK_TOKENS = 220
+SPLIT_OVERLAP_LINES = 3
 
 SKIP_DIRS = {".git", ".venv", "venv", "env", "node_modules", "__pycache__", ".chroma",
              "dist", "build", ".mypy_cache", ".pytest_cache", ".idea", ".vscode", "traces"}

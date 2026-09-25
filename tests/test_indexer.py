@@ -30,3 +30,28 @@ def test_windows_overlap_and_cover_everything():
     assert chunks[0].start_line == 1 and chunks[-1].end_line == 130
     step = config.WINDOW_LINES - config.WINDOW_OVERLAP
     assert chunks[1].start_line == 1 + step
+
+
+def test_split_to_budget_keeps_line_numbers_and_symbol():
+    from codeqa.indexer import Chunk, split_to_budget
+    words = lambda t: len(t.split())  # fake tokenizer: 1 token per word
+    text = "\n".join(f"w{i} w{i} w{i}" for i in range(10))   # 10 lines x 3 tokens
+    pieces = split_to_budget(Chunk("a.py", 101, 110, "Settings", text), words, budget=9)
+    assert all(words(p.text) <= 9 for p in pieces)
+    assert pieces[0].start_line == 101 and pieces[-1].end_line == 110
+    assert all(p.symbol == "Settings" for p in pieces)
+    for p in pieces:  # each piece's text matches its stated line range
+        assert p.text.splitlines() == text.splitlines()[p.start_line - 101:p.end_line - 100]
+
+
+def test_split_to_budget_leaves_small_chunks_alone():
+    from codeqa.indexer import Chunk, split_to_budget
+    c = Chunk("a.py", 1, 2, "f", "short text")
+    assert split_to_budget(c, lambda t: len(t.split()), budget=100) == [c]
+
+
+def test_split_to_budget_handles_one_huge_line():
+    from codeqa.indexer import Chunk, split_to_budget
+    text = "x " * 50 + "\nsmall"
+    pieces = split_to_budget(Chunk("a.py", 1, 2, "f", text), lambda t: len(t.split()), budget=10)
+    assert [(p.start_line, p.end_line) for p in pieces] == [(1, 1), (2, 2)]
