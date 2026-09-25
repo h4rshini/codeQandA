@@ -5,6 +5,7 @@ Every LLM call, tool call and the final answer is written to a JSONL trace.
 Usage: python -m codeqa.agent "How are passwords hashed?"
 """
 import json
+import re
 import sys
 import time
 
@@ -34,24 +35,60 @@ class AllModelsExhausted(RuntimeError):
     pass
 
 
-_exhausted: set[str] = set()  # models that hit their quota (429) this process; skip them
+_exhausted: set[str] = set()  # models that hit their DAILY quota this process; skip them
+_last_call = 0.0
+
+
+def _pace():
+    """Space requests out so we stay under the provider's requests-per-minute limit."""
+    global _last_call
+    if config.LLM_RPM > 0:
+        wait = _last_call + 60 / config.LLM_RPM - time.monotonic()
+        if wait > 0:
+            time.sleep(wait)
+    _last_call = time.monotonic()
+
+
+def _per_minute_delay(e: APIStatusError) -> float | None:
+    """If a 429 is a per-minute limit (not daily), return how long to wait; else None."""
+    body = str(e.body)
+    if "PerMinute" not in body:
+        return None
+    m = re.search(r"retryDelay'?\"?:\s*'?\"?(\d+(?:\.\d+)?)s", body)
+    return float(m.group(1)) + 1 if m else 30.0
+
+
+def _call(client: OpenAI, model: str, kwargs: dict, per_minute_retries: int = 4):
+    """One model: pace, and wait out per-minute limits. Other API errors propagate."""
+    for attempt in range(per_minute_retries + 1):
+        _pace()
+        try:
+            return client.chat.completions.create(model=model, **kwargs)
+        except APIStatusError as e:
+            delay = _per_minute_delay(e) if e.status_code == 429 else None
+            if delay is None or attempt == per_minute_retries:
+                raise
+            print(f"[{model} per-minute limit, waiting {delay:.0f}s]", file=sys.stderr)
+            time.sleep(delay)
 
 
 def complete(client: OpenAI, model: str | None = None, **kwargs):
-    """chat.completions.create with model fallback when a model is overloaded or out of quota."""
+    """chat.completions.create with pacing, per-minute backoff, and fallback when a model is
+    overloaded (503) or out of daily quota (429)."""
     candidates = [model or config.LLM_MODEL] + config.FALLBACK_MODELS
     models = [m for m in dict.fromkeys(candidates) if m not in _exhausted]
     if not models:
         raise AllModelsExhausted("All configured models are out of quota; try again later.")
     for i, m in enumerate(models):
         try:
-            return client.chat.completions.create(model=m, **kwargs)
+            return _call(client, m, kwargs)
         except APIStatusError as e:
+            last = i == len(models) - 1
             if e.status_code == 429:
                 _exhausted.add(m)
-                if i == len(models) - 1:
+                if last:
                     raise AllModelsExhausted(f"{m} is out of quota and no fallbacks remain") from e
-            if e.status_code not in (429, 503) or i == len(models) - 1:
+            if e.status_code not in (429, 503) or last:
                 raise
             print(f"[{m} unavailable ({e.status_code}), falling back to {models[i + 1]}]", file=sys.stderr)
 

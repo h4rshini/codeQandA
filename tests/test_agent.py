@@ -40,6 +40,7 @@ class FakeClient:
 def _isolate(monkeypatch, tmp_path):
     agent._exhausted.clear()
     monkeypatch.setattr(config, "TRACE_DIR", tmp_path)  # keep test traces out of traces/
+    monkeypatch.setattr(config, "LLM_RPM", 0)           # no pacing delays in tests
 
 
 def test_tool_result_is_fed_back_then_structured_answer(monkeypatch):
@@ -73,8 +74,8 @@ def test_invalid_final_json_is_retried_with_the_error():
     assert "invalid" in client.seen[-1][-1]["content"]
 
 
-def _err(code):
-    return APIStatusError("x", response=NS(status_code=code, headers={}, request=None), body=None)
+def _err(code, body=None):
+    return APIStatusError("x", response=NS(status_code=code, headers={}, request=None), body=body)
 
 
 def test_quota_exhausted_model_is_skipped_afterwards(monkeypatch):
@@ -106,3 +107,16 @@ def test_failed_run_still_leaves_a_trace():
     with pytest.raises(APIStatusError):
         agent.run_agent("q", client=FakeClient([_err(500)]), tracer=tracer)
     assert json.loads(tracer.path.read_text().splitlines()[-1])["type"] == "error"
+
+
+def test_per_minute_limit_waits_and_retries_same_model(monkeypatch):
+    monkeypatch.setattr(config, "LLM_MODEL", "main")
+    monkeypatch.setattr(config, "FALLBACK_MODELS", ["backup"])
+    slept = []
+    monkeypatch.setattr(agent.time, "sleep", slept.append)
+    per_minute = _err(429, body=[{"error": {"details": [
+        {"quotaId": "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"}, {"retryDelay": "33s"}]}}])
+    client = FakeClient([per_minute, _msg(content="a")])
+    agent.complete(client, messages=[])
+    assert client.models == ["main", "main"] and slept == [34.0]
+    assert "main" not in agent._exhausted  # per-minute limit is not a daily quota
