@@ -16,7 +16,7 @@ from pydantic import ValidationError
 from codeqa import config
 from codeqa.schemas import RESPONSE_FORMAT, AgentAnswer
 from codeqa.tools import TOOL_SCHEMAS, execute_tool
-from codeqa.tracing import Tracer, print_trace, summarize_result
+from codeqa.tracing import Tracer, print_trace, result_meta, summarize_result
 
 MAX_STEPS = 8
 
@@ -181,7 +181,8 @@ def _loop(run: _Run, question: str) -> tuple[AgentAnswer, int]:
             run.tracer.log("tool_call", step=step, name=call.function.name, args=args,
                            latency_ms=round((time.perf_counter() - t0) * 1000),
                            error=result.get("error"),
-                           result_summary=summarize_result(call.function.name, result))
+                           result_summary=summarize_result(call.function.name, result),
+                           meta=result_meta(call.function.name, result))
             messages.append({"role": "tool", "tool_call_id": call.id, "content": json.dumps(result)})
 
     # Runs whether the model finished or hit the step limit, so there is always a structured answer.

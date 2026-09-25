@@ -34,6 +34,24 @@ def _summarize(name: str, result: dict) -> str:
     return json.dumps(result)[:200]
 
 
+def result_meta(name: str, result: dict) -> dict | None:
+    """Structured essentials of a tool result (paths, line ranges), for UIs and analysis.
+    Never raises."""
+    try:
+        if "error" in result:
+            return None
+        if name == "search_code":
+            return {"hits": [{"path": r["path"], "lines": r["lines"], "score": r["score"]}
+                             for r in result["results"]]}
+        if name == "read_file":
+            return {"path": result["path"], "lines": result["lines"], "total_lines": result["total_lines"]}
+        if name == "list_files":
+            return {"directory": result["directory"], "count": len(result["entries"])}
+    except (KeyError, TypeError):
+        pass
+    return None
+
+
 class Tracer:
     def __init__(self, question: str, trace_dir: Path | None = None, run_id: str | None = None,
                  on_event=None):

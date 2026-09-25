@@ -5,6 +5,7 @@ Run locally: .venv/bin/uvicorn web.app:app --reload   then open http://127.0.0.1
 import asyncio
 import json
 import logging
+from functools import lru_cache
 from pathlib import Path
 
 import yaml
@@ -89,6 +90,20 @@ def info():
             "examples": [q["question"] for q in spec["questions"]]}
 
 
+@lru_cache(maxsize=1)
+def _indexed_files() -> list[dict]:
+    root = repo_root()
+    paths = sorted({m["path"] for m in _collection().get(include=["metadatas"])["metadatas"]})
+    return [{"path": p, "lines": len((root / p).read_text(encoding="utf-8", errors="replace").splitlines())}
+            for p in paths]
+
+
+@app.get("/api/files")
+def files():
+    """Every indexed file with its line count (the UI draws the repo from this)."""
+    return _indexed_files()
+
+
 @app.get("/api/evals")
 def evals():
     """Saved eval runs, oldest first, with per-question rows (local file paths stripped)."""
@@ -105,4 +120,4 @@ def evals():
 
 @app.get("/")
 def index():
-    return FileResponse(STATIC / "index.html")
+    return FileResponse(STATIC / "index.html", headers={"Cache-Control": "no-cache"})

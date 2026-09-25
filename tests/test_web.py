@@ -55,3 +55,25 @@ def test_question_length_is_validated(client):
 
 def test_source_is_sandboxed(client):
     assert client.get("/api/source", params={"path": "../../etc/passwd", "start": 1, "end": 3}).status_code == 404
+
+
+def test_result_meta_is_structured_and_never_raises():
+    from codeqa.tracing import result_meta
+    assert result_meta("read_file", {"path": "a.py", "lines": [1, 5], "total_lines": 9, "content": ""}) == \
+        {"path": "a.py", "lines": [1, 5], "total_lines": 9}
+    assert result_meta("search_code", {"results": [{"path": "a.py", "lines": [1, 2], "score": 0.5}]}) == \
+        {"hits": [{"path": "a.py", "lines": [1, 2], "score": 0.5}]}
+    assert result_meta("read_file", {"error": "x"}) is None
+    assert result_meta("read_file", {}) is None
+
+
+def test_collection_opens_once_under_concurrency(monkeypatch):
+    import threading
+    from codeqa import tools
+    calls = []
+    monkeypatch.setattr(tools, "_col", None)
+    monkeypatch.setattr(tools, "get_collection", lambda: calls.append(1) or object())
+    threads = [threading.Thread(target=tools._collection) for _ in range(16)]
+    for t in threads: t.start()
+    for t in threads: t.join()
+    assert len(calls) == 1

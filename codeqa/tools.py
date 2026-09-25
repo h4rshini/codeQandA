@@ -1,5 +1,5 @@
 """Step 2: tools the LLM can call. Each returns a JSON-serializable dict."""
-from functools import lru_cache
+import threading
 from pathlib import Path
 
 from codeqa import config
@@ -8,9 +8,19 @@ from codeqa.indexer import get_collection
 MAX_SNIPPET_LINES = 80
 
 
-@lru_cache(maxsize=1)
+_col = None
+_col_lock = threading.Lock()
+
+
 def _collection():
-    return get_collection()
+    """Open the chromadb collection once. Locked: chromadb's client setup isn't thread-safe, and
+    the web server's worker threads can hit this simultaneously on the first requests."""
+    global _col
+    if _col is None:
+        with _col_lock:
+            if _col is None:
+                _col = get_collection()
+    return _col
 
 
 def repo_root() -> Path:

@@ -1,1 +1,701 @@
-<!doctype html><title>codeQandA</title><p>Frontend coming in step 2.</p>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>codeQandA</title>
+<meta name="description" content="Ask questions about a real codebase. Every answer cites the exact lines it came from.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Martian+Mono:wdth,wght@75..112.5,300..700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #EDF0F3;
+  --sheet: #F8FAFB;
+  --ink: #141B2D;
+  --ink-2: #4A5468;
+  --ink-3: #8A93A5;
+  --rule: #D3D9E1;
+  --marker: #E4F04A;
+  --marker-ink: #141B2D;
+  --pen: #5B3DF5;
+  --pen-soft: rgba(91, 61, 245, 0.14);
+  --miss: #C8472D;
+  --bar: #C9D0DA;
+  --bar-touched: #9AA4B5;
+  --shadow: 0 1px 0 rgba(20, 27, 45, 0.04), 0 8px 24px -12px rgba(20, 27, 45, 0.18);
+
+  --mono: "Martian Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0E1422;
+    --sheet: #151D2F;
+    --ink: #E7ECF3;
+    --ink-2: #A3ADBF;
+    --ink-3: #6B7589;
+    --rule: #26314A;
+    --marker: #D9E83A;
+    --pen: #9C8BFF;
+    --pen-soft: rgba(156, 139, 255, 0.16);
+    --miss: #F0715A;
+    --bar: #2C3852;
+    --bar-touched: #4A5775;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 16px/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration-color: var(--ink-3); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--pen); }
+:focus-visible { outline: 2px solid var(--pen); outline-offset: 3px; border-radius: 4px; }
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 720px) { .wrap { padding: 0 32px; } }
+
+/* ---------- top bar ---------- */
+.top { display: flex; align-items: center; gap: 24px; padding-top: 20px; padding-bottom: 20px; }
+.brand { font: 600 15px/1 var(--mono); font-stretch: 87.5%; letter-spacing: -0.01em; text-decoration: none; }
+.brand b { color: var(--pen); font-weight: 600; }
+.tabs { display: flex; gap: 4px; margin-left: auto; }
+.tab {
+  border: 0; background: none; cursor: pointer; padding: 8px 12px; border-radius: 999px;
+  font: 500 14px/1 var(--sans); color: var(--ink-2); transition: background .2s, color .2s;
+}
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { background: var(--sheet); color: var(--ink); box-shadow: var(--shadow); }
+.top-link { font-size: 14px; color: var(--ink-2); }
+@media (max-width: 560px) { .top-link { display: none; } }
+
+/* ---------- hero ---------- */
+.hero { padding-top: 40px; padding-bottom: 8px; }
+@media (min-width: 720px) { .hero { padding-top: 72px; } }
+.eyebrow { margin: 0 0 20px; font: 500 12px/1.4 var(--mono); font-stretch: 87.5%; color: var(--ink-2); letter-spacing: 0.02em; }
+.eyebrow a { color: var(--ink); }
+h1 {
+  margin: 0; font: 600 clamp(30px, 5.6vw, 64px)/1.02 var(--mono); font-stretch: 100%;
+  letter-spacing: -0.045em; max-width: 14ch;
+}
+.lede { margin: 18px 0 0; font: 400 clamp(18px, 2.2vw, 23px)/1.4 var(--sans); color: var(--ink-2); max-width: 34ch; }
+.hl {
+  color: var(--marker-ink); padding: 0 .12em; margin: 0 -.06em; border-radius: 3px;
+  background: linear-gradient(100deg, var(--marker) 0 100%) no-repeat left center / 100% 88%;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.lede .hl { animation: sweep 0.9s 0.5s var(--ease) both; }
+@keyframes sweep { from { background-size: 0% 88%; } to { background-size: 100% 88%; } }
+
+/* ask form */
+.ask { margin-top: 36px; display: flex; gap: 8px; background: var(--sheet); border: 1px solid var(--rule);
+  border-radius: 14px; padding: 6px; box-shadow: var(--shadow); transition: border-color .2s, box-shadow .2s; }
+.ask:focus-within { border-color: var(--pen); box-shadow: 0 0 0 4px var(--pen-soft), var(--shadow); }
+.ask input {
+  flex: 1; min-width: 0; border: 0; background: none; outline: none; padding: 12px 12px;
+  font: 400 17px/1.3 var(--sans); color: var(--ink);
+}
+.ask input::placeholder { color: var(--ink-3); }
+.ask-btn {
+  border: 0; cursor: pointer; border-radius: 10px; padding: 0 20px; background: var(--ink); color: var(--paper);
+  font: 600 15px/1 var(--sans); display: inline-flex; align-items: center; gap: 8px;
+  transition: transform .15s var(--ease), opacity .2s;
+}
+.ask-btn:hover { transform: translateY(-1px); }
+.ask-btn:active { transform: translateY(0); }
+.ask-btn:disabled { opacity: .45; cursor: default; transform: none; }
+
+.examples { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.examples-label { font-size: 13px; color: var(--ink-3); margin-right: 4px; }
+.chip {
+  border: 1px solid var(--rule); background: transparent; cursor: pointer; border-radius: 999px;
+  padding: 6px 12px; font: 400 13px/1.3 var(--sans); color: var(--ink-2); text-align: left;
+  transition: border-color .2s, color .2s, background .2s;
+  animation: rise .5s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms + 700ms);
+}
+.chip:hover { border-color: var(--pen); color: var(--ink); background: var(--pen-soft); }
+.chip.more { border-style: dashed; }
+
+/* ---------- repo skyline ---------- */
+.skyline-wrap { margin: 48px 0 0; }
+.skyline { display: flex; align-items: flex-end; gap: 18px; height: 168px; }
+.group { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; min-width: 0; }
+.group-bars { display: flex; align-items: flex-end; gap: 3px; height: 100%; }
+.group-name { margin-top: 8px; font: 500 10.5px/1 var(--mono); font-stretch: 75%; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar {
+  position: relative; flex: 1 1 0; min-width: 2px; max-width: 22px; height: var(--h); border-radius: 3px 3px 1px 1px;
+  background: var(--bar); transform-origin: bottom; overflow: hidden;
+  animation: grow .7s var(--ease) both; animation-delay: calc(var(--i) * 12ms + 200ms);
+  transition: background .3s;
+}
+.bar:hover { background: var(--bar-touched); }
+.bar.touched { background: var(--bar-touched); }
+.bar.lit { background: var(--bar-touched); box-shadow: inset 0 0 0 1px var(--pen); }
+@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.band { position: absolute; left: 0; right: 0; min-height: 2px; transform-origin: top; animation: paint .5s var(--ease) both; }
+.band.hit { background: var(--pen-soft); }
+.band.read { background: var(--pen); }
+.band.cited { background: var(--marker); box-shadow: 0 0 0 1px var(--marker); animation: paint .5s var(--ease) both, glow 1.6s .4s ease-out both; z-index: 1; }
+@keyframes paint { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+@keyframes glow { 0% { filter: brightness(1.6); } 100% { filter: brightness(1); } }
+.skyline-foot { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; margin-top: 14px; font-size: 13px; color: var(--ink-2); }
+.hover-file { font: 400 12px/1.4 var(--mono); font-stretch: 87.5%; color: var(--ink); min-height: 1.4em; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+@media (max-width: 720px) {
+  .skyline { gap: 8px; height: 120px; }
+  .group-bars { gap: 1.5px; }
+}
+
+/* ---------- run: trail + answer ---------- */
+.run { display: grid; gap: 20px; margin-top: 40px; padding-bottom: 32px; }
+@media (min-width: 900px) { .run { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; } }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 16px; padding: 22px; box-shadow: var(--shadow); animation: rise .5s var(--ease) both; }
+.panel + .panel { animation-delay: .08s; }
+.panel h2 { margin: 0 0 16px; font: 600 12px/1 var(--mono); font-stretch: 87.5%; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); display: flex; justify-content: space-between; gap: 12px; }
+.panel h2 .meta { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--ink-3); }
+.question-echo { margin: 0 0 18px; font: 500 19px/1.35 var(--sans); }
+
+.steps { list-style: none; margin: 0; padding: 0; position: relative; }
+.steps::before { content: ""; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 1px; background: var(--rule); }
+.step { position: relative; padding: 0 0 16px 28px; animation: rise .45s var(--ease) both; }
+.step:last-child { padding-bottom: 0; }
+.dot { position: absolute; left: 3px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--sheet); border: 2px solid var(--pen); }
+.step.note .dot { border-color: var(--ink-3); }
+.step.err .dot { border-color: var(--miss); }
+.step-title { font-size: 14.5px; line-height: 1.4; }
+.step-title code, .answer-text code, .detail code { font: 400 0.86em/1 var(--mono); font-stretch: 87.5%; background: var(--pen-soft); padding: 2px 5px; border-radius: 4px; }
+.step.note .step-title { color: var(--ink-2); font-style: italic; }
+.step.err .step-title { color: var(--miss); }
+.hits { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+.hit { display: grid; grid-template-columns: minmax(0, 1fr) 52px; gap: 10px; align-items: center; font: 400 11.5px/1.3 var(--mono); font-stretch: 87.5%; color: var(--ink-2); }
+.hit span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.score { height: 4px; border-radius: 2px; background: var(--rule); overflow: hidden; }
+.score i { display: block; height: 100%; background: var(--pen); transform-origin: left; animation: fill .7s .1s var(--ease) both; }
+@keyframes fill { from { transform: scaleX(0); } }
+.strip { margin-top: 8px; height: 6px; border-radius: 3px; background: var(--rule); position: relative; overflow: hidden; max-width: 260px; }
+.strip i { position: absolute; top: 0; bottom: 0; background: var(--pen); border-radius: 3px; transform-origin: left; animation: fill .6s var(--ease) both; }
+.pending .dot { border-color: var(--pen); animation: pulse 1.4s ease-in-out infinite; }
+.pending .step-title { color: var(--ink-2); }
+.elapsed { font: 400 12px/1 var(--mono); font-stretch: 87.5%; color: var(--ink-3); margin-left: 6px; }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 var(--pen-soft); } 50% { box-shadow: 0 0 0 6px var(--pen-soft); } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* answer */
+.answer-text { font-size: 17px; line-height: 1.6; margin: 0; animation: rise .5s var(--ease) both; }
+.answer-text p { margin: 0 0 .8em; }
+.answer-text p:last-child { margin-bottom: 0; }
+.conf { display: inline-flex; align-items: center; gap: 6px; font: 500 11px/1 var(--mono); font-stretch: 87.5%; letter-spacing: .02em; padding: 5px 9px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); text-transform: none; }
+.conf i { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); }
+.conf.high i { background: var(--pen); }
+.conf.medium i { background: var(--ink-2); }
+.conf.low i { background: var(--miss); }
+.skeleton { display: grid; gap: 10px; }
+.skeleton i { height: 12px; border-radius: 6px; background: linear-gradient(90deg, var(--rule) 0 40%, color-mix(in srgb, var(--rule) 40%, var(--sheet)) 50%, var(--rule) 60% 100%) 0 0 / 300% 100%; animation: shimmer 1.6s linear infinite; }
+.skeleton i:nth-child(2) { width: 88%; } .skeleton i:nth-child(3) { width: 64%; }
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.waiting-note { margin: 14px 0 0; font-size: 13.5px; color: var(--ink-3); }
+
+.sources { margin-top: 24px; border-top: 1px solid var(--rule); padding-top: 18px; }
+.sources h3 { margin: 0 0 10px; font: 600 12px/1 var(--mono); font-stretch: 87.5%; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.src { border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; margin-top: 8px; animation: rise .45s var(--ease) both; }
+.src-head { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 0; background: none; cursor: pointer; text-align: left; font: 400 12.5px/1.3 var(--mono); font-stretch: 87.5%; }
+.src-head:hover { background: var(--pen-soft); }
+.src-path { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.src-lines { color: var(--ink-2); }
+.verify { font: 500 10.5px/1 var(--sans); padding: 4px 7px; border-radius: 999px; white-space: nowrap; }
+.verify.ok { background: var(--pen-soft); color: var(--pen); }
+.verify.bad { background: color-mix(in srgb, var(--miss) 16%, transparent); color: var(--miss); }
+.chev { transition: transform .25s var(--ease); color: var(--ink-3); }
+.src-head[aria-expanded="true"] .chev { transform: rotate(90deg); }
+.code { border-top: 1px solid var(--rule); background: color-mix(in srgb, var(--paper) 55%, var(--sheet)); overflow: auto; max-height: 380px; padding: 8px 0; }
+.code-inner { display: inline-block; min-width: 100%; }
+.ln { display: grid; grid-template-columns: 52px max-content; font: 400 12.5px/1.75 var(--mono); font-stretch: 87.5%; white-space: pre; position: relative; }
+.ln .n { text-align: right; padding-right: 14px; color: var(--ink-3); user-select: none; }
+.ln .t { padding-right: 16px; }
+.ln.cite { background: linear-gradient(color-mix(in srgb, var(--marker) 20%, transparent), color-mix(in srgb, var(--marker) 20%, transparent)) no-repeat left / 0% 100%;
+  animation: sweep-line .5s var(--ease) both; animation-delay: calc(min(var(--d), 24) * 35ms + 150ms); }
+.ln.cite::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--marker); }
+.ln.cite .n { color: var(--ink); font-weight: 600; }
+@keyframes sweep-line { to { background-size: 100% 100%; } }
+.src-missing { padding: 12px; border-top: 1px solid var(--rule); font-size: 13.5px; color: var(--miss); }
+
+.error-box { border: 1px solid color-mix(in srgb, var(--miss) 40%, var(--rule)); background: color-mix(in srgb, var(--miss) 8%, var(--sheet)); color: var(--ink); border-radius: 12px; padding: 14px 16px; font-size: 15px; animation: rise .4s var(--ease) both; }
+
+/* ---------- results ---------- */
+.results { padding-top: 48px; padding-bottom: 48px; }
+@media (min-width: 720px) { .results { padding-top: 72px; } }
+.results h1 { max-width: 16ch; }
+.results .lede { max-width: 46ch; }
+.matrix { margin-top: 44px; display: grid; gap: 18px; }
+.mrow { display: grid; gap: 10px; }
+@media (min-width: 760px) { .mrow { grid-template-columns: 170px minmax(0, 1fr); align-items: center; } }
+.mlabel { font: 500 13px/1.3 var(--sans); }
+.mlabel small { display: block; font: 400 11px/1.4 var(--mono); font-stretch: 87.5%; color: var(--ink-3); }
+.cells { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 5px; }
+@media (max-width: 560px) { .cells { grid-template-columns: repeat(10, minmax(0, 1fr)); } }
+.cell {
+  aspect-ratio: 1; border-radius: 6px; cursor: pointer; border: 1.5px solid transparent; padding: 0;
+  font: 500 9.5px/1 var(--mono); font-stretch: 75%; display: grid; place-items: center;
+  animation: pop .45s var(--ease) both; animation-delay: calc(var(--i) * 25ms + var(--row) * 200ms + 200ms);
+  transition: transform .15s var(--ease), box-shadow .2s;
+}
+.cell:hover { transform: translateY(-2px); }
+.cell[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--pen); }
+.cell.pass { background: var(--ink); color: var(--paper); }
+.cell.split { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 28%, transparent) 0 2px, transparent 2px 5px); border-color: var(--ink); color: var(--ink); }
+.cell.fail { border-color: var(--miss); color: var(--miss); background: transparent; }
+@keyframes pop { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+.mlegend { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 16px; font-size: 13px; color: var(--ink-2); }
+.mlegend span { display: inline-flex; align-items: center; gap: 7px; }
+.mlegend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; border: 1.5px solid transparent; }
+.detail { margin-top: 22px; }
+.detail .panel { animation-duration: .35s; }
+.detail-q { font: 500 18px/1.35 var(--sans); margin: 0 0 12px; }
+.detail dl { display: grid; gap: 12px; margin: 0; }
+.detail dt { font: 600 11px/1 var(--mono); font-stretch: 87.5%; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+.detail dd { margin: 0; font-size: 15px; }
+
+.metrics { width: 100%; border-collapse: collapse; margin-top: 44px; font-size: 15px; }
+.metrics th, .metrics td { text-align: left; padding: 12px 8px; border-bottom: 1px solid var(--rule); }
+.metrics th { font: 600 11px/1 var(--mono); font-stretch: 87.5%; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.metrics td.num { font: 500 15px/1 var(--mono); font-stretch: 87.5%; white-space: nowrap; }
+.metrics td.num.up { color: var(--ink); }
+.metrics .delta { font-size: 11.5px; color: var(--pen); margin-left: 6px; }
+.metrics td small { display: block; color: var(--ink-3); font-size: 13px; margin-top: 2px; }
+@media (max-width: 560px) { .metrics td small { display: none; } }
+
+.findings { margin-top: 56px; display: grid; gap: 20px; }
+@media (min-width: 900px) { .findings { grid-template-columns: repeat(3, 1fr); } }
+.finding h3 { margin: 0 0 8px; font: 600 17px/1.3 var(--sans); }
+.finding p { margin: 0; color: var(--ink-2); font-size: 15px; }
+
+footer { border-top: 1px solid var(--rule); margin-top: 24px; padding-top: 20px; padding-bottom: 40px; font-size: 13.5px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 8px 24px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<header class="wrap top">
+  <a class="brand" href="#ask">code<b>Q</b>and<b>A</b></a>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" id="tab-ask" aria-controls="view-ask" aria-selected="true" data-view="ask">Ask</button>
+    <button class="tab" role="tab" id="tab-results" aria-controls="view-results" aria-selected="false" data-view="results">How accurate is it?</button>
+  </nav>
+  <a class="top-link" href="https://github.com/h4rshini/codeQandA">Source</a>
+</header>
+
+<main>
+  <!-- ================= ASK ================= -->
+  <section id="view-ask" role="tabpanel" aria-labelledby="tab-ask">
+    <div class="wrap hero">
+      <p class="eyebrow">Reading <a id="repo-link" href="https://github.com/h4rshini/Signal-stockwatchlist">Signal-stockwatchlist</a>, a stock watchlist app · <span id="file-count">…</span> files</p>
+      <h1>Ask about this codebase.</h1>
+      <p class="lede">Every answer points to <span class="hl">the exact lines it came from.</span></p>
+
+      <form class="ask" id="ask-form" autocomplete="off">
+        <label for="q" class="sr-only">Your question about the code</label>
+        <input id="q" name="q" maxlength="300" placeholder="e.g. How does the app decide a stock is unusual?" required>
+        <button class="ask-btn" id="ask-btn" type="submit">Ask</button>
+      </form>
+      <div class="examples" id="examples" aria-label="Example questions"><span class="examples-label">Try:</span></div>
+
+      <figure class="skyline-wrap" aria-label="Map of every file in the repository">
+        <div class="skyline" id="skyline" aria-hidden="true"></div>
+        <figcaption class="skyline-foot">
+          <span class="hover-file" id="hover-file">Each bar is a file in the repo. Its height is the file's length.</span>
+          <span class="legend">
+            <span><i style="background:var(--pen-soft);outline:1px solid var(--pen)"></i>search hit</span>
+            <span><i style="background:var(--pen)"></i>read</span>
+            <span><i style="background:var(--marker)"></i>cited in answer</span>
+          </span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="wrap run" id="run" hidden aria-live="polite">
+      <section class="panel" aria-labelledby="trail-h">
+        <h2 id="trail-h">What the agent did <span class="meta" id="step-count"></span></h2>
+        <ol class="steps" id="steps"></ol>
+      </section>
+      <section class="panel" aria-labelledby="answer-h">
+        <h2 id="answer-h">Answer <span id="conf-slot"></span></h2>
+        <p class="question-echo" id="question-echo"></p>
+        <div id="answer-body"></div>
+        <div class="sources" id="sources" hidden><h3>Sources</h3><div id="source-list"></div></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ================= RESULTS ================= -->
+  <section id="view-results" role="tabpanel" aria-labelledby="tab-results" hidden>
+    <div class="wrap results">
+      <p class="eyebrow">Evaluation · 20 questions with known answers</p>
+      <h1 id="results-h">How often it gets the answer right.</h1>
+      <p class="lede">The agent answered the same 20 questions twice, before and after a fix to how the code is split up for search. Same model, same grading. Select a square to see the question and answer.</p>
+
+      <div class="matrix" id="matrix"></div>
+      <div class="mlegend">
+        <span><i style="background:var(--ink)"></i>Correct by both checks</span>
+        <span><i style="background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ink) 28%,transparent) 0 2px,transparent 2px 5px);border-color:var(--ink)"></i>Checks disagree</span>
+        <span><i style="border-color:var(--miss)"></i>Wrong or incomplete</span>
+      </div>
+      <div class="detail" id="detail"></div>
+
+      <table class="metrics" id="metrics"></table>
+
+      <div class="findings">
+        <article class="finding">
+          <h3>A chunking bug hid the settings</h3>
+          <p>The search model only reads the first 256 tokens of each piece of code, and 26% of pieces were longer. Everything in the settings file after line 23 was invisible, so the agent could name a threshold but never find its value. Splitting pieces to fit fixed all four affected questions.</p>
+        </article>
+        <article class="finding">
+          <h3>The first grader was too generous</h3>
+          <p>An AI grader first scored the baseline at 100%, including answers missing the number the question asked for. A strict keyword check caught it. Both checks are reported, and both runs were graded under the same rules.</p>
+        </article>
+        <article class="finding">
+          <h3>Its confidence doesn't mean much yet</h3>
+          <p>The agent said "high confidence" on all 40 answers, including the ones it got partly wrong. Making confidence reflect what it actually verified is the next thing to fix.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <span>Built by <a href="https://github.com/h4rshini">h4rshini</a></span>
+  <a href="https://github.com/h4rshini/codeQandA">Source and eval harness on GitHub</a>
+  <span id="model-note"></span>
+</footer>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+// Minimal inline formatting for model text: `code` and **bold**, on escaped input.
+const fmt = s => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+const paras = s => String(s).split(/\n{2,}/).map(p => `<p>${fmt(p).replace(/\n/g, "<br>")}</p>`).join("");
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const files = new Map();          // path -> { lines, el }
+let examples = [], busy = false;
+
+/* ---------------- views ---------------- */
+function show(view) {
+  for (const t of document.querySelectorAll(".tab")) t.setAttribute("aria-selected", t.dataset.view === view);
+  $("#view-ask").hidden = view !== "ask";
+  $("#view-results").hidden = view !== "results";
+  scrollTo(0, 0);
+  if (view === "results") loadResults();
+}
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => { location.hash = t.dataset.view; }));
+addEventListener("hashchange", () => show(location.hash === "#results" ? "results" : "ask"));
+
+/* ---------------- repo skyline ---------------- */
+function groupOf(path) {
+  if (path.startsWith("backend/app/")) return "backend/app";
+  if (path.startsWith("backend/tests/")) return "backend/tests";
+  if (path.startsWith("frontend/")) return "frontend";
+  return "docs & config";
+}
+function drawSkyline(list) {
+  const order = ["backend/app", "backend/tests", "frontend", "docs & config"];
+  const max = Math.sqrt(Math.max(...list.map(f => f.lines)));
+  const sky = $("#skyline");
+  const box = sky.clientHeight - 22;
+  let i = 0;
+  for (const g of order) {
+    const members = list.filter(f => groupOf(f.path) === g);
+    if (!members.length) continue;
+    const group = document.createElement("div");
+    group.className = "group";
+    group.style.flex = `${members.length} 1 0`;
+    const bars = document.createElement("div");
+    bars.className = "group-bars";
+    for (const f of members) {
+      const bar = document.createElement("span");
+      bar.className = "bar";
+      bar.style.setProperty("--h", `${Math.max(6, Math.sqrt(f.lines) / max * box)}px`);
+      bar.style.setProperty("--i", i++);
+      bar.dataset.path = f.path;
+      bars.append(bar);
+      files.set(f.path, { lines: f.lines, el: bar });
+    }
+    const name = document.createElement("span");
+    name.className = "group-name";
+    name.textContent = `${g} (${members.length})`;
+    group.append(bars, name);
+    sky.append(group);
+  }
+  sky.addEventListener("pointerover", e => {
+    const p = e.target.closest(".bar")?.dataset.path;
+    if (p) $("#hover-file").textContent = `${p} · ${files.get(p).lines} lines`;
+  });
+}
+function mark(path, start, end, kind) {
+  const f = files.get(path);
+  if (!f || !f.lines) return;
+  const s = Math.max(1, start), e = Math.min(f.lines, Math.max(s, end));
+  const band = document.createElement("span");
+  band.className = `band ${kind}`;
+  band.style.top = `${(s - 1) / f.lines * 100}%`;
+  band.style.height = `${Math.max((e - s + 1) / f.lines * 100, 3)}%`;
+  f.el.append(band);
+  f.el.classList.add(kind === "hit" ? "touched" : "lit");
+}
+function clearMarks() {
+  document.querySelectorAll(".band").forEach(b => b.remove());
+  document.querySelectorAll(".bar").forEach(b => b.classList.remove("touched", "lit"));
+}
+
+/* ---------------- examples ---------------- */
+function renderExamples() {
+  const box = $("#examples");
+  box.querySelectorAll(".chip").forEach(c => c.remove());
+  const pick = [...examples].sort(() => Math.random() - 0.5).slice(0, 3);
+  pick.forEach((q, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = q; b.style.setProperty("--i", i);
+    b.addEventListener("click", () => { $("#q").value = q; ask(q); });
+    box.append(b);
+  });
+  const more = document.createElement("button");
+  more.type = "button"; more.className = "chip more"; more.textContent = "Show others"; more.style.setProperty("--i", 3);
+  more.addEventListener("click", renderExamples);
+  box.append(more);
+}
+
+/* ---------------- asking ---------------- */
+let timer = null, t0 = 0, stepCount = 0;
+function pendingRow(text) {
+  let row = $("#pending");
+  if (!row) {
+    row = document.createElement("li");
+    row.id = "pending"; row.className = "step pending";
+    row.innerHTML = `<span class="dot"></span><div class="step-title"><span class="ptext"></span><span class="elapsed" id="elapsed"></span></div>`;
+  }
+  $(".ptext", row).textContent = text;
+  $("#steps").append(row);  // always keep it last
+}
+function addStep(cls, html) {
+  const li = document.createElement("li");
+  li.className = `step ${cls}`;
+  li.innerHTML = `<span class="dot"></span>${html}`;
+  const pending = $("#pending");
+  pending ? $("#steps").insertBefore(li, pending) : $("#steps").append(li);
+  if (cls !== "note") $("#step-count").textContent = `${++stepCount} tool call${stepCount === 1 ? "" : "s"}`;
+}
+function tick() { const el = $("#elapsed"); if (el) el.textContent = `${Math.round((performance.now() - t0) / 1000)}s`; }
+
+function onTrace(e) {
+  if (e.type === "llm_call") {
+    if (e.reasoning) addStep("note", `<div class="step-title">${fmt(e.reasoning)}</div>`);
+    const writing = String(e.step).startsWith("finalize") || e.n_tool_calls === 0;
+    pendingRow(writing ? "Writing the answer" : "Thinking about what to look at next");
+  } else if (e.type === "tool_call") {
+    const a = e.args || {}, m = e.meta;
+    if (e.error) {
+      addStep("err", `<div class="step-title">${esc(e.name)} failed: ${esc(e.error)}</div>`);
+    } else if (e.name === "search_code") {
+      const hits = (m?.hits || []).map(h => {
+        mark(h.path, h.lines[0], h.lines[1], "hit");
+        return `<li class="hit"><span>${esc(h.path)}:${h.lines[0]}–${h.lines[1]}</span><span class="score"><i style="width:${Math.max(4, Math.min(100, h.score * 150))}%"></i></span></li>`;
+      }).join("");
+      addStep("", `<div class="step-title">Searched for <code>${esc(a.query)}</code></div><ul class="hits">${hits}</ul>`);
+    } else if (e.name === "read_file" && m) {
+      mark(m.path, m.lines[0], m.lines[1], "read");
+      const left = (m.lines[0] - 1) / m.total_lines * 100, width = Math.max((m.lines[1] - m.lines[0] + 1) / m.total_lines * 100, 3);
+      addStep("", `<div class="step-title">Read <code>${esc(m.path)}</code>, lines ${m.lines[0]}–${m.lines[1]} of ${m.total_lines}</div><div class="strip"><i style="left:${left}%;width:${width}%"></i></div>`);
+    } else if (e.name === "list_files" && m) {
+      addStep("", `<div class="step-title">Listed <code>${esc(m.directory)}/</code> (${m.count} entries)</div>`);
+    } else {
+      addStep("", `<div class="step-title">${esc(e.name)}: ${esc(e.result_summary)}</div>`);
+    }
+    pendingRow("Thinking about what to look at next");
+  }
+}
+
+function onAnswer(a) {
+  $("#pending")?.remove();
+  const conf = { high: "High confidence", medium: "Medium confidence", low: "Low confidence" }[a.confidence] || a.confidence;
+  $("#conf-slot").innerHTML = `<span class="conf ${esc(a.confidence)}"><i></i>${esc(conf)}</span>`;
+  $("#answer-body").innerHTML = `<div class="answer-text">${paras(a.answer)}</div>`;
+  const list = $("#source-list");
+  list.innerHTML = "";
+  $("#sources").hidden = !a.cited_files.length;
+  a.cited_files.forEach((c, i) => {
+    const [s, e] = c.lines;
+    const item = document.createElement("div");
+    item.className = "src"; item.style.animationDelay = `${i * 80}ms`;
+    item.innerHTML = `<button class="src-head" aria-expanded="false"><span class="chev">›</span><span class="src-path">${esc(c.path)}</span><span class="src-lines">${s}–${e}</span><span class="verify">checking…</span></button><div class="src-body" hidden></div>`;
+    list.append(item);
+    const head = $(".src-head", item), body = $(".src-body", item), badge = $(".verify", item);
+    let loaded = false;
+    // Hallucination check, live: does this file and line range really exist?
+    fetch(`/api/source?${new URLSearchParams({ path: c.path, start: s, end: e })}`).then(r => {
+      const ok = r.ok && files.has(c.path) && e >= s && e <= files.get(c.path).lines;
+      badge.className = `verify ${ok ? "ok" : "bad"}`;
+      badge.textContent = ok ? "lines exist" : "not in repo";
+      if (ok) mark(c.path, s, e, "cited");
+    });
+    head.addEventListener("click", async () => {
+      const open = head.getAttribute("aria-expanded") !== "true";
+      head.setAttribute("aria-expanded", open);
+      body.hidden = !open;
+      if (open && !loaded) { loaded = true; await loadCode(body, c.path, s, e); }
+    });
+    if (i === 0) head.click();
+  });
+}
+
+async function loadCode(body, path, s, e) {
+  const ctx = 3;
+  const r = await fetch(`/api/source?${new URLSearchParams({ path, start: Math.max(1, s - ctx), end: e + ctx })}`);
+  if (!r.ok) { body.innerHTML = `<div class="src-missing">This file or line range doesn't exist in the repo. The agent cited something it couldn't have read.</div>`; return; }
+  const d = await r.json();
+  let k = 0;
+  body.innerHTML = `<div class="code"><div class="code-inner">${d.lines.map((t, j) => {
+    const n = d.start + j, cite = n >= s && n <= e;
+    return `<div class="ln${cite ? " cite" : ""}"${cite ? ` style="--d:${k++}"` : ""}><span class="n">${n}</span><span class="t">${esc(t) || " "}</span></div>`;
+  }).join("")}</div></div>`;
+}
+
+function onError(msg) {
+  $("#pending")?.remove();
+  $("#answer-body").innerHTML = `<div class="error-box">${esc(msg)}</div>`;
+}
+
+async function ask(question) {
+  question = question.trim();
+  if (busy || question.length < 3) return;
+  busy = true; $("#ask-btn").disabled = true;
+  clearMarks(); stepCount = 0;
+  $("#run").hidden = false;
+  $("#steps").innerHTML = ""; $("#step-count").textContent = ""; $("#conf-slot").innerHTML = "";
+  $("#question-echo").textContent = question;
+  $("#answer-body").innerHTML = `<div class="skeleton"><i></i><i></i><i></i></div><p class="waiting-note">Answers usually take 20–60 seconds. The steps on the left update as the agent works.</p>`;
+  $("#sources").hidden = true;
+  pendingRow("Reading the question");
+  t0 = performance.now(); timer = setInterval(tick, 500); tick();
+  $("#run").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+
+  try {
+    const res = await fetch("/api/ask", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ question }) });
+    if (!res.ok) {
+      let msg = res.status === 422 ? "Questions need between 3 and 300 characters." : `The server returned an error (${res.status}). Try again in a moment.`;
+      try { const j = await res.json(); if (typeof j.detail === "string") msg = j.detail; } catch {}
+      return onError(msg);
+    }
+    const reader = res.body.getReader(), dec = new TextDecoder();
+    let buf = "", gotAnswer = false;
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let cut;
+      while ((cut = buf.indexOf("\n\n")) >= 0) {
+        const block = buf.slice(0, cut); buf = buf.slice(cut + 2);
+        const kind = /^event: (.*)$/m.exec(block)?.[1], data = /^data: (.*)$/m.exec(block)?.[1];
+        if (!kind || data === undefined) continue;
+        const payload = JSON.parse(data);
+        if (kind === "trace") onTrace(payload);
+        else if (kind === "answer") { gotAnswer = true; onAnswer(payload); }
+        else if (kind === "error") { gotAnswer = true; onError(payload.message); }
+      }
+    }
+    if (!gotAnswer) onError("The connection closed before an answer arrived. Try again.");
+  } catch {
+    onError("Couldn't reach the server. Check your connection and try again.");
+  } finally {
+    clearInterval(timer); busy = false; $("#ask-btn").disabled = false;
+  }
+}
+$("#ask-form").addEventListener("submit", ev => { ev.preventDefault(); ask($("#q").value); });
+
+/* ---------------- results ---------------- */
+let resultsLoaded = false;
+async function loadResults() {
+  if (resultsLoaded) return;
+  resultsLoaded = true;
+  const runs = await (await fetch("/api/evals")).json();
+  if (!runs.length) { $("#matrix").innerHTML = `<p>No eval runs found yet. Run <code>python -m evals.run_eval</code> to create one.</p>`; return; }
+  const label = (i) => runs.length === 1 ? "Eval run" : i === 0 ? "Before the fix" : i === runs.length - 1 ? "After the fix" : `Run ${i + 1}`;
+  const state = r => {
+    if (r.error) return "fail";
+    const judge = r.judge?.verdict === "correct", strict = r.strict_correct;
+    return judge && strict ? "pass" : judge || strict ? "split" : "fail";
+  };
+  $("#matrix").innerHTML = runs.map((run, ri) => `
+    <div class="mrow">
+      <div class="mlabel">${label(ri)}<small>${run.summary.chunks} code pieces · ${esc(run.summary.model)}</small></div>
+      <div class="cells">${run.rows.map((r, i) => `<button class="cell ${state(r)}" style="--i:${i};--row:${ri}" data-run="${ri}" data-i="${i}" aria-pressed="false" aria-label="${esc(r.id)}: ${state(r)}">${esc(r.id.replace("q", ""))}</button>`).join("")}</div>
+    </div>`).join("");
+  $("#matrix").addEventListener("click", e => {
+    const cell = e.target.closest(".cell");
+    if (!cell) return;
+    document.querySelectorAll(".cell[aria-pressed=true]").forEach(c => c.setAttribute("aria-pressed", "false"));
+    cell.setAttribute("aria-pressed", "true");
+    const r = runs[cell.dataset.run].rows[cell.dataset.i];
+    const verdict = { correct: "Correct", partially_correct: "Partially correct", incorrect: "Incorrect" }[r.judge?.verdict] || "Not judged";
+    $("#detail").innerHTML = `<div class="panel"><p class="eyebrow" style="margin-bottom:10px">${esc(r.id)} · ${label(+cell.dataset.run)}</p>
+      <p class="detail-q">${esc(r.question)}</p>
+      ${r.error ? `<p>${esc(r.error)}</p>` : `<dl>
+        <div><dt>Agent's answer</dt><dd>${fmt(r.answer.answer)}</dd></div>
+        <div><dt>AI grader</dt><dd>${esc(verdict)}. ${esc(r.judge?.reason || "")}</dd></div>
+        <div><dt>Strict check</dt><dd>${r.strict_correct ? "Passed" : "Failed"}${r.missing_keywords?.length ? `, missing ${r.missing_keywords.map(k => `<code>${esc(k)}</code>`).join(", ")}` : ""}${r.citation_hit === false ? ", didn't cite the expected file" : ""}</dd></div>
+        <div><dt>Cited</dt><dd>${r.answer.cited_files.map(c => `<code>${esc(c.path)}:${c.lines[0]}–${c.lines[1]}</code>`).join(" ") || "Nothing"}</dd></div>
+      </dl>`}</div>`;
+  });
+
+  const a = runs[0].summary, b = runs[runs.length - 1].summary;
+  const pct = (n, d) => d ? Math.round(100 * n / d) : 0;
+  const n = s => s.questions - s.errors;
+  if (runs.length > 1 && b.strict_correct > a.strict_correct)
+    $("#results-h").textContent = `One bug fix took strict accuracy from ${pct(a.strict_correct, n(a))}% to ${pct(b.strict_correct, n(b))}%.`;
+  const rows = [
+    ["Correct (strict check)", "Cited the right file and mentioned every required fact", s => pct(s.strict_correct, n(s)), "%"],
+    ["Correct (AI grader)", "Graded against a reference answer", s => pct(s.judge_correct, n(s)), "%"],
+    ["Cited the right file", "At least one expected file cited", s => pct(s.citation_hits, s.citation_questions), "%"],
+    ["Made-up citations", "Files or line ranges that don't exist", s => s.hallucinated_citations, ` of ${""}`],
+  ];
+  const cols = runs.length > 1 ? `<th>Before</th><th>After</th>` : `<th>Result</th>`;
+  $("#metrics").innerHTML = `<thead><tr><th>Measure</th>${cols}</tr></thead><tbody>${rows.map(([name, hint, f, unit]) => {
+    const fmtv = s => unit === "%" ? `${f(s)}%` : `${f(s)} of ${s.total_citations}`;
+    const d = f(b) - f(a);
+    const delta = runs.length > 1 && unit === "%" && d ? `<span class="delta">${d > 0 ? "+" : ""}${d}</span>` : "";
+    return `<tr><td>${name}<small>${hint}</small></td>${runs.length > 1 ? `<td class="num">${fmtv(a)}</td>` : ""}<td class="num up">${fmtv(b)}${delta}</td></tr>`;
+  }).join("")}</tbody>`;
+}
+
+/* ---------------- boot ---------------- */
+(async () => {
+  show(location.hash === "#results" ? "results" : "ask");
+  try {
+    const [info, list] = await Promise.all([fetch("/api/info").then(r => r.json()), fetch("/api/files").then(r => r.json())]);
+    $("#file-count").textContent = list.length;
+    $("#model-note").textContent = `Model: ${info.model}`;
+    examples = info.examples;
+    renderExamples();
+    drawSkyline(list);
+  } catch {
+    $("#hover-file").textContent = "Couldn't load the repository map. Refresh to try again.";
+  }
+})();
+</script>
+</body>
+</html>
