@@ -1,0 +1,5268 @@
+{
+ "where are user passwords hashed, and which library is used": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "Where are user passwords hashed, and which library is used?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 1174,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 1174,
+    "prompt_tokens": 386,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 1301,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "password"
+    },
+    "latency_ms": 125,
+    "error": null,
+    "result_summary": "5 hits: backend/app/security.py:12-13 (0.487), backend/app/security.py:16-17 (0.48), backend/app/schemas.py:11-13 (0.378), backend/app/auth.py:24-30 (0.378), backend/tests/test_auth.py:20-23 (0.378)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/security.py",
+       "lines": [
+        12,
+        13
+       ],
+       "score": 0.487
+      },
+      {
+       "path": "backend/app/security.py",
+       "lines": [
+        16,
+        17
+       ],
+       "score": 0.48
+      },
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        11,
+        13
+       ],
+       "score": 0.378
+      },
+      {
+       "path": "backend/app/auth.py",
+       "lines": [
+        24,
+        30
+       ],
+       "score": 0.378
+      },
+      {
+       "path": "backend/tests/test_auth.py",
+       "lines": [
+        20,
+        23
+       ],
+       "score": 0.378
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 6198,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4898,
+    "prompt_tokens": 978,
+    "completion_tokens": 17,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 6289,
+    "step": 1,
+    "name": "search_code",
+    "args": {
+     "query": "import bcrypt"
+    },
+    "latency_ms": 91,
+    "error": null,
+    "result_summary": "5 hits: backend/app/security.py:12-13 (0.497), backend/app/security.py:16-17 (0.471), backend/app/security.py:1-11 (0.467), backend/requirements.txt:1-10 (0.281), backend/tests/conftest.py:1-11 (0.217)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/security.py",
+       "lines": [
+        12,
+        13
+       ],
+       "score": 0.497
+      },
+      {
+       "path": "backend/app/security.py",
+       "lines": [
+        16,
+        17
+       ],
+       "score": 0.471
+      },
+      {
+       "path": "backend/app/security.py",
+       "lines": [
+        1,
+        11
+       ],
+       "score": 0.467
+      },
+      {
+       "path": "backend/requirements.txt",
+       "lines": [
+        1,
+        10
+       ],
+       "score": 0.281
+      },
+      {
+       "path": "backend/tests/conftest.py",
+       "lines": [
+        1,
+        11
+       ],
+       "score": 0.217
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 11123,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4834,
+    "prompt_tokens": 1464,
+    "completion_tokens": 35,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 11124,
+    "step": 2,
+    "name": "read_file",
+    "args": {
+     "start_line": 1,
+     "end_line": 20,
+     "path": "backend/app/security.py"
+    },
+    "latency_ms": 0,
+    "error": null,
+    "result_summary": "read backend/app/security.py:1-20 of 31",
+    "meta": {
+     "path": "backend/app/security.py",
+     "lines": [
+      1,
+      20
+     ],
+     "total_lines": 31
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 16941,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5817,
+    "prompt_tokens": 1745,
+    "completion_tokens": 82,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 21683,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4742,
+    "prompt_tokens": 1651,
+    "completion_tokens": 107,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "User passwords are hashed in backend/app/security.py using the bcrypt library.",
+   "cited_files": [
+    {
+     "path": "backend/app/security.py",
+     "lines": [
+      1,
+      20
+     ]
+    },
+    {
+     "path": "backend/requirements.txt",
+     "lines": [
+      1,
+      10
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "how long are login tokens valid, and what algorithm signs them": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "How long are login tokens valid, and what algorithm signs them?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4749,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4749,
+    "prompt_tokens": 387,
+    "completion_tokens": 17,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4842,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "token expiration"
+    },
+    "latency_ms": 93,
+    "error": null,
+    "result_summary": "5 hits: backend/app/security.py:25-31 (0.441), backend/app/security.py:20-22 (0.418), backend/app/security.py:1-11 (0.4), backend/app/schemas.py:16-18 (0.355), frontend/src/auth.jsx:22-47 (0.341)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/security.py",
+       "lines": [
+        25,
+        31
+       ],
+       "score": 0.441
+      },
+      {
+       "path": "backend/app/security.py",
+       "lines": [
+        20,
+        22
+       ],
+       "score": 0.418
+      },
+      {
+       "path": "backend/app/security.py",
+       "lines": [
+        1,
+        11
+       ],
+       "score": 0.4
+      },
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        16,
+        18
+       ],
+       "score": 0.355
+      },
+      {
+       "path": "frontend/src/auth.jsx",
+       "lines": [
+        22,
+        47
+       ],
+       "score": 0.341
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9783,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4941,
+    "prompt_tokens": 1117,
+    "completion_tokens": 35,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9784,
+    "step": 1,
+    "name": "read_file",
+    "args": {
+     "path": "backend/app/security.py",
+     "start_line": 1,
+     "end_line": 15
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/security.py:1-15 of 31",
+    "meta": {
+     "path": "backend/app/security.py",
+     "lines": [
+      1,
+      15
+     ],
+     "total_lines": 31
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 14716,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4932,
+    "prompt_tokens": 1327,
+    "completion_tokens": 72,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 19840,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5124,
+    "prompt_tokens": 1223,
+    "completion_tokens": 79,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "Login tokens are valid for 7 days and are signed using the HS256 algorithm.",
+   "cited_files": [
+    {
+     "path": "backend/app/security.py",
+     "lines": [
+      1,
+      11
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "what happens when a request to a protected endpoint has a missing or invalid auth token": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "What happens when a request to a protected endpoint has a missing or invalid auth token?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4469,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4468,
+    "prompt_tokens": 391,
+    "completion_tokens": 19,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4557,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "auth token missing invalid"
+    },
+    "latency_ms": 88,
+    "error": null,
+    "result_summary": "5 hits: frontend/src/auth.jsx:22-47 (0.493), backend/tests/test_auth.py:13-17 (0.456), backend/tests/test_auth.py:26-28 (0.452), backend/app/security.py:25-31 (0.447), backend/app/auth.py:24-30 (0.444)",
+    "meta": {
+     "hits": [
+      {
+       "path": "frontend/src/auth.jsx",
+       "lines": [
+        22,
+        47
+       ],
+       "score": 0.493
+      },
+      {
+       "path": "backend/tests/test_auth.py",
+       "lines": [
+        13,
+        17
+       ],
+       "score": 0.456
+      },
+      {
+       "path": "backend/tests/test_auth.py",
+       "lines": [
+        26,
+        28
+       ],
+       "score": 0.452
+      },
+      {
+       "path": "backend/app/security.py",
+       "lines": [
+        25,
+        31
+       ],
+       "score": 0.447
+      },
+      {
+       "path": "backend/app/auth.py",
+       "lines": [
+        24,
+        30
+       ],
+       "score": 0.444
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9679,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5122,
+    "prompt_tokens": 1317,
+    "completion_tokens": 20,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9771,
+    "step": 1,
+    "name": "search_code",
+    "args": {
+     "query": "get_current_user"
+    },
+    "latency_ms": 91,
+    "error": null,
+    "result_summary": "5 hits: backend/app/main.py:55-57 (0.604), backend/app/deps.py:20-30 (0.579), backend/app/watchlist.py:79-82 (0.393), backend/tests/test_auth.py:31-37 (0.384), backend/app/search.py:1-8 (0.37)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/main.py",
+       "lines": [
+        55,
+        57
+       ],
+       "score": 0.604
+      },
+      {
+       "path": "backend/app/deps.py",
+       "lines": [
+        20,
+        30
+       ],
+       "score": 0.579
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        79,
+        82
+       ],
+       "score": 0.393
+      },
+      {
+       "path": "backend/tests/test_auth.py",
+       "lines": [
+        31,
+        37
+       ],
+       "score": 0.384
+      },
+      {
+       "path": "backend/app/search.py",
+       "lines": [
+        1,
+        8
+       ],
+       "score": 0.37
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 15080,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5309,
+    "prompt_tokens": 2055,
+    "completion_tokens": 35,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 15081,
+    "step": 2,
+    "name": "read_file",
+    "args": {
+     "path": "backend/app/deps.py",
+     "start_line": 1,
+     "end_line": 35
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/deps.py:1-30 of 30",
+    "meta": {
+     "path": "backend/app/deps.py",
+     "lines": [
+      1,
+      30
+     ],
+     "total_lines": 30
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20452,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5371,
+    "prompt_tokens": 2471,
+    "completion_tokens": 240,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 25569,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5117,
+    "prompt_tokens": 2535,
+    "completion_tokens": 136,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "When a request is made to a protected endpoint with a missing or invalid auth token, the backend raises an HTTPException with status code 401 Unauthorized and the message \"invalid or missing token\".",
+   "cited_files": [
+    {
+     "path": "backend/app/deps.py",
+     "lines": [
+      20,
+      30
+     ]
+    },
+    {
+     "path": "backend/tests/test_auth.py",
+     "lines": [
+      26,
+      28
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "why does login return the same error whether the email or the password is wrong": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "Why does login return the same error whether the email or the password is wrong?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4921,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4921,
+    "prompt_tokens": 390,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 5007,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "login"
+    },
+    "latency_ms": 85,
+    "error": null,
+    "result_summary": "5 hits: backend/app/auth.py:24-30 (0.418), backend/app/schemas.py:11-13 (0.379), frontend/src/components/AuthScreen.jsx:1-21 (0.372), backend/app/auth.py:13-21 (0.362), frontend/src/components/AuthScreen.jsx:44-58 (0.357)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/auth.py",
+       "lines": [
+        24,
+        30
+       ],
+       "score": 0.418
+      },
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        11,
+        13
+       ],
+       "score": 0.379
+      },
+      {
+       "path": "frontend/src/components/AuthScreen.jsx",
+       "lines": [
+        1,
+        21
+       ],
+       "score": 0.372
+      },
+      {
+       "path": "backend/app/auth.py",
+       "lines": [
+        13,
+        21
+       ],
+       "score": 0.362
+      },
+      {
+       "path": "frontend/src/components/AuthScreen.jsx",
+       "lines": [
+        44,
+        58
+       ],
+       "score": 0.357
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9780,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4774,
+    "prompt_tokens": 1304,
+    "completion_tokens": 36,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9781,
+    "step": 1,
+    "name": "read_file",
+    "args": {
+     "start_line": 20,
+     "end_line": 35,
+     "path": "backend/app/auth.py"
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/auth.py:20-30 of 30",
+    "meta": {
+     "path": "backend/app/auth.py",
+     "lines": [
+      20,
+      30
+     ],
+     "total_lines": 30
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 15309,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5527,
+    "prompt_tokens": 1593,
+    "completion_tokens": 104,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20225,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4916,
+    "prompt_tokens": 1521,
+    "completion_tokens": 83,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "Login returns the same error whether the email or password is wrong to avoid leaking which accounts exist in the system.",
+   "cited_files": [
+    {
+     "path": "backend/app/auth.py",
+     "lines": [
+      24,
+      30
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "how many signals must fire for a stock to be flagged, and what are the signals": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "How many signals must fire for a stock to be flagged, and what are the signals?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4669,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4668,
+    "prompt_tokens": 392,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4759,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "signal"
+    },
+    "latency_ms": 90,
+    "error": null,
+    "result_summary": "5 hits: PITCH.md:1-5 (0.548), backend/app/signals.py:7-14 (0.463), backend/app/schemas.py:61-64 (0.431), backend/app/signals.py:70-88 (0.399), backend/app/signals.py:86-98 (0.393)",
+    "meta": {
+     "hits": [
+      {
+       "path": "PITCH.md",
+       "lines": [
+        1,
+        5
+       ],
+       "score": 0.548
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        7,
+        14
+       ],
+       "score": 0.463
+      },
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        61,
+        64
+       ],
+       "score": 0.431
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        70,
+        88
+       ],
+       "score": 0.399
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        86,
+        98
+       ],
+       "score": 0.393
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9592,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4833,
+    "prompt_tokens": 1350,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9675,
+    "step": 1,
+    "name": "search_code",
+    "args": {
+     "query": "evaluate_signals"
+    },
+    "latency_ms": 83,
+    "error": null,
+    "result_summary": "5 hits: backend/app/signals.py:70-88 (0.508), backend/tests/test_signals.py:24-26 (0.497), backend/app/signals.py:34-46 (0.495), backend/tests/test_signals.py:19-21 (0.488), backend/app/detail.py:108-125 (0.486)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        70,
+        88
+       ],
+       "score": 0.508
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        24,
+        26
+       ],
+       "score": 0.497
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        34,
+        46
+       ],
+       "score": 0.495
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        19,
+        21
+       ],
+       "score": 0.488
+      },
+      {
+       "path": "backend/app/detail.py",
+       "lines": [
+        108,
+        125
+       ],
+       "score": 0.486
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 15194,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5519,
+    "prompt_tokens": 2389,
+    "completion_tokens": 36,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 15195,
+    "step": 2,
+    "name": "read_file",
+    "args": {
+     "end_line": 150,
+     "start_line": 1,
+     "path": "backend/app/signals.py"
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/signals.py:1-98 of 98",
+    "meta": {
+     "path": "backend/app/signals.py",
+     "lines": [
+      1,
+      98
+     ],
+     "total_lines": 98
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20135,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4940,
+    "prompt_tokens": 3900,
+    "completion_tokens": 17,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 20224,
+    "step": 3,
+    "name": "search_code",
+    "args": {
+     "query": "def evaluate"
+    },
+    "latency_ms": 89,
+    "error": null,
+    "result_summary": "5 hits: backend/app/engine.py:28-42 (0.443), backend/tests/test_engine.py:20-22 (0.393), backend/tests/test_signals.py:13-16 (0.385), backend/tests/test_signals.py:7-10 (0.384), backend/tests/test_engine.py:25-27 (0.38)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/engine.py",
+       "lines": [
+        28,
+        42
+       ],
+       "score": 0.443
+      },
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        20,
+        22
+       ],
+       "score": 0.393
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        13,
+        16
+       ],
+       "score": 0.385
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        7,
+        10
+       ],
+       "score": 0.384
+      },
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        25,
+        27
+       ],
+       "score": 0.38
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 24945,
+    "step": 4,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4721,
+    "prompt_tokens": 4637,
+    "completion_tokens": 22,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 25038,
+    "step": 4,
+    "name": "search_code",
+    "args": {
+     "query": "CO_OCCURRENCE_MIN"
+    },
+    "latency_ms": 93,
+    "error": null,
+    "result_summary": "5 hits: backend/tests/test_engine.py:25-27 (0.36), backend/tests/test_engine.py:30-32 (0.348), backend/app/feed.py:36-50 (0.344), backend/app/detail.py:79-97 (0.316), backend/app/watchlist.py:30-38 (0.302)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        25,
+        27
+       ],
+       "score": 0.36
+      },
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        30,
+        32
+       ],
+       "score": 0.348
+      },
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        36,
+        50
+       ],
+       "score": 0.344
+      },
+      {
+       "path": "backend/app/detail.py",
+       "lines": [
+        79,
+        97
+       ],
+       "score": 0.316
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        30,
+        38
+       ],
+       "score": 0.302
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 30272,
+    "step": 5,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5232,
+    "prompt_tokens": 5577,
+    "completion_tokens": 20,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 30357,
+    "step": 5,
+    "name": "search_code",
+    "args": {
+     "query": "CO_OCCURRENCE"
+    },
+    "latency_ms": 84,
+    "error": null,
+    "result_summary": "5 hits: backend/tests/test_engine.py:25-27 (0.335), backend/tests/test_engine.py:30-32 (0.319), backend/app/feed.py:36-50 (0.246), backend/app/watchlist.py:20-27 (0.241), backend/app/detail.py:95-110 (0.234)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        25,
+        27
+       ],
+       "score": 0.335
+      },
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        30,
+        32
+       ],
+       "score": 0.319
+      },
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        36,
+        50
+       ],
+       "score": 0.246
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        20,
+        27
+       ],
+       "score": 0.241
+      },
+      {
+       "path": "backend/app/detail.py",
+       "lines": [
+        95,
+        110
+       ],
+       "score": 0.234
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 35105,
+    "step": 6,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4748,
+    "prompt_tokens": 6489,
+    "completion_tokens": 17,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 35193,
+    "step": 6,
+    "name": "search_code",
+    "args": {
+     "query": "EngineResult"
+    },
+    "latency_ms": 88,
+    "error": null,
+    "result_summary": "5 hits: backend/app/engine.py:19-25 (0.418), backend/app/engine.py:28-42 (0.336), frontend/src/components/StockDetail.jsx:51-66 (0.28), frontend/src/components/SearchAdd.jsx:20-53 (0.266), ARCHITECTURE.md:1-15 (0.254)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/engine.py",
+       "lines": [
+        19,
+        25
+       ],
+       "score": 0.418
+      },
+      {
+       "path": "backend/app/engine.py",
+       "lines": [
+        28,
+        42
+       ],
+       "score": 0.336
+      },
+      {
+       "path": "frontend/src/components/StockDetail.jsx",
+       "lines": [
+        51,
+        66
+       ],
+       "score": 0.28
+      },
+      {
+       "path": "frontend/src/components/SearchAdd.jsx",
+       "lines": [
+        20,
+        53
+       ],
+       "score": 0.266
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        1,
+        15
+       ],
+       "score": 0.254
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 39998,
+    "step": 7,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4805,
+    "prompt_tokens": 7635,
+    "completion_tokens": 23,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 40088,
+    "step": 7,
+    "name": "search_code",
+    "args": {
+     "query": "CO_OCCURRENCE_MIN ="
+    },
+    "latency_ms": 90,
+    "error": null,
+    "result_summary": "5 hits: backend/tests/test_engine.py:25-27 (0.387), backend/tests/test_engine.py:30-32 (0.364), backend/app/feed.py:36-50 (0.349), backend/app/detail.py:79-97 (0.317), backend/app/watchlist.py:30-38 (0.31)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        25,
+        27
+       ],
+       "score": 0.387
+      },
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        30,
+        32
+       ],
+       "score": 0.364
+      },
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        36,
+        50
+       ],
+       "score": 0.349
+      },
+      {
+       "path": "backend/app/detail.py",
+       "lines": [
+        79,
+        97
+       ],
+       "score": 0.317
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        30,
+        38
+       ],
+       "score": 0.31
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 45793,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5705,
+    "prompt_tokens": 8399,
+    "completion_tokens": 179,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "A stock must have at least 2 signals fire for it to be flagged. The three individual signals are: 1) price_move (latest daily return measured against the stock's recent volatility), 2) volume (latest trading volume against its recent average), and 3) index_relative (today's move with the market's move removed, measured in units of the stock's volatility).",
+   "cited_files": [
+    {
+     "path": "backend/app/engine.py",
+     "lines": [
+      28,
+      42
+     ]
+    },
+    {
+     "path": "backend/app/signals.py",
+     "lines": [
+      17,
+      98
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "what decides whether a flag is high confidence or medium confidence": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "What decides whether a flag is high confidence or medium confidence?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 3994,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 3993,
+    "prompt_tokens": 386,
+    "completion_tokens": 20,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4081,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "high confidence medium confidence flag"
+    },
+    "latency_ms": 87,
+    "error": null,
+    "result_summary": "5 hits: backend/tests/test_engine.py:6-10 (0.487), backend/app/watchlist.py:30-38 (0.467), backend/app/config.py:34-39 (0.466), backend/tests/test_engine.py:25-27 (0.427), backend/app/engine.py:19-25 (0.426)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        6,
+        10
+       ],
+       "score": 0.487
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        30,
+        38
+       ],
+       "score": 0.467
+      },
+      {
+       "path": "backend/app/config.py",
+       "lines": [
+        34,
+        39
+       ],
+       "score": 0.466
+      },
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        25,
+        27
+       ],
+       "score": 0.427
+      },
+      {
+       "path": "backend/app/engine.py",
+       "lines": [
+        19,
+        25
+       ],
+       "score": 0.426
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9408,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5327,
+    "prompt_tokens": 1123,
+    "completion_tokens": 20,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9492,
+    "step": 1,
+    "name": "search_code",
+    "args": {
+     "query": "high_confidence_score"
+    },
+    "latency_ms": 83,
+    "error": null,
+    "result_summary": "5 hits: backend/tests/test_engine.py:30-32 (0.571), backend/app/config.py:34-39 (0.457), backend/app/engine.py:19-25 (0.44), backend/tests/test_engine.py:25-27 (0.428), backend/app/engine.py:28-42 (0.42)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        30,
+        32
+       ],
+       "score": 0.571
+      },
+      {
+       "path": "backend/app/config.py",
+       "lines": [
+        34,
+        39
+       ],
+       "score": 0.457
+      },
+      {
+       "path": "backend/app/engine.py",
+       "lines": [
+        19,
+        25
+       ],
+       "score": 0.44
+      },
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        25,
+        27
+       ],
+       "score": 0.428
+      },
+      {
+       "path": "backend/app/engine.py",
+       "lines": [
+        28,
+        42
+       ],
+       "score": 0.42
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 14450,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4959,
+    "prompt_tokens": 1885,
+    "completion_tokens": 36,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 14452,
+    "step": 2,
+    "name": "read_file",
+    "args": {
+     "start_line": 25,
+     "path": "backend/app/engine.py",
+     "end_line": 50
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/engine.py:25-50 of 100",
+    "meta": {
+     "path": "backend/app/engine.py",
+     "lines": [
+      25,
+      50
+     ],
+     "total_lines": 100
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 19449,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4997,
+    "prompt_tokens": 2325,
+    "completion_tokens": 36,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 19451,
+    "step": 3,
+    "name": "read_file",
+    "args": {
+     "path": "backend/app/config.py",
+     "end_line": 45,
+     "start_line": 25
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/config.py:25-42 of 42",
+    "meta": {
+     "path": "backend/app/config.py",
+     "lines": [
+      25,
+      42
+     ],
+     "total_lines": 42
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 25187,
+    "step": 4,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5736,
+    "prompt_tokens": 2687,
+    "completion_tokens": 211,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 29827,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4640,
+    "prompt_tokens": 2722,
+    "completion_tokens": 155,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "Whether a flag is high or medium confidence is decided by comparing the combined strength score of all fired signals against the high_confidence_score threshold (default 3.0). If the score is greater than or equal to this threshold, the confidence is \"high\"; otherwise, it is \"medium\".",
+   "cited_files": [
+    {
+     "path": "backend/app/engine.py",
+     "lines": [
+      28,
+      42
+     ]
+    },
+    {
+     "path": "backend/app/config.py",
+     "lines": [
+      34,
+      39
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "how is the price move signal computed": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "How is the price move signal computed?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4807,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4807,
+    "prompt_tokens": 382,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4913,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "price move signal"
+    },
+    "latency_ms": 106,
+    "error": null,
+    "result_summary": "5 hits: backend/tests/test_signals.py:1-6 (0.512), backend/app/signals.py:34-46 (0.489), backend/tests/test_signals.py:64-67 (0.464), PITCH.md:1-5 (0.46), backend/app/detail.py:46-49 (0.432)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        1,
+        6
+       ],
+       "score": 0.512
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        34,
+        46
+       ],
+       "score": 0.489
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        64,
+        67
+       ],
+       "score": 0.464
+      },
+      {
+       "path": "PITCH.md",
+       "lines": [
+        1,
+        5
+       ],
+       "score": 0.46
+      },
+      {
+       "path": "backend/app/detail.py",
+       "lines": [
+        46,
+        49
+       ],
+       "score": 0.432
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 10015,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5102,
+    "prompt_tokens": 1160,
+    "completion_tokens": 35,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 10017,
+    "step": 1,
+    "name": "read_file",
+    "args": {
+     "end_line": 60,
+     "path": "backend/app/signals.py",
+     "start_line": 1
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/signals.py:1-60 of 98",
+    "meta": {
+     "path": "backend/app/signals.py",
+     "lines": [
+      1,
+      60
+     ],
+     "total_lines": 98
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 14952,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4935,
+    "prompt_tokens": 2094,
+    "completion_tokens": 20,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 15080,
+    "step": 2,
+    "name": "search_code",
+    "args": {
+     "query": "price_sigma_threshold"
+    },
+    "latency_ms": 128,
+    "error": null,
+    "result_summary": "5 hits: backend/tests/test_engine.py:30-32 (0.444), backend/tests/test_detail.py:44-53 (0.425), backend/app/signals.py:34-46 (0.422), backend/app/signals.py:86-98 (0.418), backend/app/config.py:34-39 (0.408)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        30,
+        32
+       ],
+       "score": 0.444
+      },
+      {
+       "path": "backend/tests/test_detail.py",
+       "lines": [
+        44,
+        53
+       ],
+       "score": 0.425
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        34,
+        46
+       ],
+       "score": 0.422
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        86,
+        98
+       ],
+       "score": 0.418
+      },
+      {
+       "path": "backend/app/config.py",
+       "lines": [
+        34,
+        39
+       ],
+       "score": 0.408
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20082,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5002,
+    "prompt_tokens": 3032,
+    "completion_tokens": 21,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 20195,
+    "step": 3,
+    "name": "search_code",
+    "args": {
+     "query": "price_sigma_threshold ="
+    },
+    "latency_ms": 112,
+    "error": null,
+    "result_summary": "5 hits: backend/tests/test_engine.py:30-32 (0.47), backend/tests/test_detail.py:44-53 (0.458), backend/app/signals.py:86-98 (0.453), backend/app/signals.py:34-46 (0.444), backend/tests/test_engine.py:25-27 (0.432)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        30,
+        32
+       ],
+       "score": 0.47
+      },
+      {
+       "path": "backend/tests/test_detail.py",
+       "lines": [
+        44,
+        53
+       ],
+       "score": 0.458
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        86,
+        98
+       ],
+       "score": 0.453
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        34,
+        46
+       ],
+       "score": 0.444
+      },
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        25,
+        27
+       ],
+       "score": 0.432
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 25316,
+    "step": 4,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5121,
+    "prompt_tokens": 3955,
+    "completion_tokens": 22,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 25422,
+    "step": 4,
+    "name": "search_code",
+    "args": {
+     "query": "price_sigma_threshold: float"
+    },
+    "latency_ms": 106,
+    "error": null,
+    "result_summary": "5 hits: backend/app/signals.py:86-98 (0.402), backend/app/signals.py:34-46 (0.398), backend/app/config.py:34-39 (0.398), backend/tests/test_engine.py:30-32 (0.389), backend/tests/test_detail.py:44-53 (0.377)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        86,
+        98
+       ],
+       "score": 0.402
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        34,
+        46
+       ],
+       "score": 0.398
+      },
+      {
+       "path": "backend/app/config.py",
+       "lines": [
+        34,
+        39
+       ],
+       "score": 0.398
+      },
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        30,
+        32
+       ],
+       "score": 0.389
+      },
+      {
+       "path": "backend/tests/test_detail.py",
+       "lines": [
+        44,
+        53
+       ],
+       "score": 0.377
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 30422,
+    "step": 5,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5000,
+    "prompt_tokens": 4897,
+    "completion_tokens": 35,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 30423,
+    "step": 5,
+    "name": "read_file",
+    "args": {
+     "end_line": 40,
+     "start_line": 1,
+     "path": "backend/app/config.py"
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/config.py:1-40 of 42",
+    "meta": {
+     "path": "backend/app/config.py",
+     "lines": [
+      1,
+      40
+     ],
+     "total_lines": 42
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 37552,
+    "step": 6,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 7129,
+    "prompt_tokens": 5605,
+    "completion_tokens": 530,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 40968,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 3415,
+    "prompt_tokens": 5959,
+    "completion_tokens": 179,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "The price move signal is computed by taking the stock's latest daily return and comparing its magnitude against the standard deviation (sigma) of the stock's recent historical daily returns. If the absolute latest return exceeds the stock's typical daily volatility by a configurable threshold (defaulting to 2.0 standard deviations), the signal fires, reporting a ratio of the move relative to its typical range and a normalized strength score.",
+   "cited_files": [
+    {
+     "path": "backend/app/signals.py",
+     "lines": [
+      17,
+      46
+     ]
+    },
+    {
+     "path": "backend/app/config.py",
+     "lines": [
+      23,
+      28
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "how does the volume signal decide that a day's trading volume is unusual": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "How does the volume signal decide that a day's trading volume is unusual?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4111,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4111,
+    "prompt_tokens": 390,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4192,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "volume"
+    },
+    "latency_ms": 81,
+    "error": null,
+    "result_summary": "5 hits: backend/app/fetcher.py:84-93 (0.4), backend/app/signals.py:49-67 (0.387), backend/tests/test_signals.py:32-36 (0.359), backend/tests/test_signals.py:48-50 (0.345), backend/tests/test_signals.py:37-40 (0.344)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        84,
+        93
+       ],
+       "score": 0.4
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        49,
+        67
+       ],
+       "score": 0.387
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        32,
+        36
+       ],
+       "score": 0.359
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        48,
+        50
+       ],
+       "score": 0.345
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        37,
+        40
+       ],
+       "score": 0.344
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9569,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5377,
+    "prompt_tokens": 1179,
+    "completion_tokens": 36,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9570,
+    "step": 1,
+    "name": "read_file",
+    "args": {
+     "path": "backend/app/signals.py",
+     "start_line": 45,
+     "end_line": 70
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/signals.py:45-70 of 98",
+    "meta": {
+     "path": "backend/app/signals.py",
+     "lines": [
+      45,
+      70
+     ],
+     "total_lines": 98
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 14743,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5173,
+    "prompt_tokens": 1654,
+    "completion_tokens": 20,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 14827,
+    "step": 2,
+    "name": "search_code",
+    "args": {
+     "query": "volume_ratio_threshold"
+    },
+    "latency_ms": 84,
+    "error": null,
+    "result_summary": "5 hits: backend/app/signals.py:49-67 (0.515), backend/tests/test_signals.py:53-55 (0.421), backend/tests/test_signals.py:32-36 (0.419), backend/app/fetcher.py:84-93 (0.415), backend/tests/test_signals.py:37-40 (0.378)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        49,
+        67
+       ],
+       "score": 0.515
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        53,
+        55
+       ],
+       "score": 0.421
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        32,
+        36
+       ],
+       "score": 0.419
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        84,
+        93
+       ],
+       "score": 0.415
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        37,
+        40
+       ],
+       "score": 0.378
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 19608,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4781,
+    "prompt_tokens": 2479,
+    "completion_tokens": 20,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 19687,
+    "step": 3,
+    "name": "search_code",
+    "args": {
+     "query": "min_baseline_days"
+    },
+    "latency_ms": 79,
+    "error": null,
+    "result_summary": "5 hits: backend/app/feed.py:20-24 (0.525), backend/app/signals.py:17-36 (0.414), backend/app/engine.py:45-58 (0.381), backend/app/detail.py:79-97 (0.376), backend/app/signals.py:70-88 (0.371)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        20,
+        24
+       ],
+       "score": 0.525
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        17,
+        36
+       ],
+       "score": 0.414
+      },
+      {
+       "path": "backend/app/engine.py",
+       "lines": [
+        45,
+        58
+       ],
+       "score": 0.381
+      },
+      {
+       "path": "backend/app/detail.py",
+       "lines": [
+        79,
+        97
+       ],
+       "score": 0.376
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        70,
+        88
+       ],
+       "score": 0.371
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 24835,
+    "step": 4,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5148,
+    "prompt_tokens": 3734,
+    "completion_tokens": 20,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 24917,
+    "step": 4,
+    "name": "search_code",
+    "args": {
+     "query": "volume_ratio_threshold"
+    },
+    "latency_ms": 82,
+    "error": null,
+    "result_summary": "5 hits: backend/app/signals.py:49-67 (0.515), backend/tests/test_signals.py:53-55 (0.421), backend/tests/test_signals.py:32-36 (0.419), backend/app/fetcher.py:84-93 (0.415), backend/tests/test_signals.py:37-40 (0.378)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        49,
+        67
+       ],
+       "score": 0.515
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        53,
+        55
+       ],
+       "score": 0.421
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        32,
+        36
+       ],
+       "score": 0.419
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        84,
+        93
+       ],
+       "score": 0.415
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        37,
+        40
+       ],
+       "score": 0.378
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 29673,
+    "step": 5,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4755,
+    "prompt_tokens": 4559,
+    "completion_tokens": 17,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 29758,
+    "step": 5,
+    "name": "search_code",
+    "args": {
+     "query": "class Settings"
+    },
+    "latency_ms": 85,
+    "error": null,
+    "result_summary": "5 hits: backend/app/config.py:40-42 (0.362), backend/app/signals.py:1-6 (0.317), backend/app/config.py:1-3 (0.31), backend/app/db.py:25-26 (0.231), frontend/src/index.css:348-360 (0.226)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/config.py",
+       "lines": [
+        40,
+        42
+       ],
+       "score": 0.362
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        1,
+        6
+       ],
+       "score": 0.317
+      },
+      {
+       "path": "backend/app/config.py",
+       "lines": [
+        1,
+        3
+       ],
+       "score": 0.31
+      },
+      {
+       "path": "backend/app/db.py",
+       "lines": [
+        25,
+        26
+       ],
+       "score": 0.231
+      },
+      {
+       "path": "frontend/src/index.css",
+       "lines": [
+        348,
+        360
+       ],
+       "score": 0.226
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 35097,
+    "step": 6,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5339,
+    "prompt_tokens": 4990,
+    "completion_tokens": 35,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 35098,
+    "step": 6,
+    "name": "read_file",
+    "args": {
+     "end_line": 45,
+     "path": "backend/app/config.py",
+     "start_line": 1
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/config.py:1-42 of 42",
+    "meta": {
+     "path": "backend/app/config.py",
+     "lines": [
+      1,
+      42
+     ],
+     "total_lines": 42
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 41259,
+    "step": 7,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 6161,
+    "prompt_tokens": 5712,
+    "completion_tokens": 374,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 45427,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4168,
+    "prompt_tokens": 5910,
+    "completion_tokens": 166,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "The volume signal determines that a day's volume is unusual by comparing today's volume to the arithmetic mean of recent baseline volumes (requiring at least 5 baseline days). If the resulting ratio of today's volume to the baseline average meets or exceeds the volume ratio threshold (defaulting to 2.0x), the signal fires as unusual.",
+   "cited_files": [
+    {
+     "path": "backend/app/signals.py",
+     "lines": [
+      49,
+      67
+     ]
+    },
+    {
+     "path": "backend/app/config.py",
+     "lines": [
+      23,
+      28
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "what does the index-relative signal do if market index data isn't available for that day": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "What does the index-relative signal do if market index data isn't available for that day?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4218,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4218,
+    "prompt_tokens": 394,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4305,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "index-relative"
+    },
+    "latency_ms": 87,
+    "error": null,
+    "result_summary": "5 hits: backend/tests/test_signals.py:58-61 (0.31), backend/tests/test_signals.py:70-72 (0.289), backend/app/signals.py:86-98 (0.269), backend/tests/test_engine.py:42-46 (0.267), backend/tests/test_signals.py:64-67 (0.262)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        58,
+        61
+       ],
+       "score": 0.31
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        70,
+        72
+       ],
+       "score": 0.289
+      },
+      {
+       "path": "backend/app/signals.py",
+       "lines": [
+        86,
+        98
+       ],
+       "score": 0.269
+      },
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        42,
+        46
+       ],
+       "score": 0.267
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        64,
+        67
+       ],
+       "score": 0.262
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9237,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4932,
+    "prompt_tokens": 1197,
+    "completion_tokens": 37,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9238,
+    "step": 1,
+    "name": "read_file",
+    "args": {
+     "start_line": 50,
+     "end_line": 120,
+     "path": "backend/app/signals.py"
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/signals.py:50-98 of 98",
+    "meta": {
+     "path": "backend/app/signals.py",
+     "lines": [
+      50,
+      98
+     ],
+     "total_lines": 98
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 15180,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5942,
+    "prompt_tokens": 2032,
+    "completion_tokens": 38,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 15181,
+    "step": 2,
+    "name": "read_file",
+    "args": {
+     "path": "backend/tests/test_signals.py",
+     "start_line": 55,
+     "end_line": 75
+    },
+    "latency_ms": 2,
+    "error": null,
+    "result_summary": "read backend/tests/test_signals.py:55-72 of 72",
+    "meta": {
+     "path": "backend/tests/test_signals.py",
+     "lines": [
+      55,
+      72
+     ],
+     "total_lines": 72
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20079,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4897,
+    "prompt_tokens": 2403,
+    "completion_tokens": 223,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 25137,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5058,
+    "prompt_tokens": 2450,
+    "completion_tokens": 107,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "If market index data isn't available for that day (i.e. index_return is None), the index-relative signal simply does not fire, returning a SignalResult with fired=False.",
+   "cited_files": [
+    {
+     "path": "backend/app/signals.py",
+     "lines": [
+      70,
+      79
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "which ticker symbol is used as the market proxy": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "Which ticker symbol is used as the market proxy?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 5046,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5046,
+    "prompt_tokens": 384,
+    "completion_tokens": 17,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 5141,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "market proxy"
+    },
+    "latency_ms": 95,
+    "error": null,
+    "result_summary": "5 hits: ARCHITECTURE.md:34-38 (0.341), README.md:51-79 (0.303), backend/app/models.py:25-28 (0.301), README.md:77-85 (0.29), ARCHITECTURE.md:64-73 (0.287)",
+    "meta": {
+     "hits": [
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        34,
+        38
+       ],
+       "score": 0.341
+      },
+      {
+       "path": "README.md",
+       "lines": [
+        51,
+        79
+       ],
+       "score": 0.303
+      },
+      {
+       "path": "backend/app/models.py",
+       "lines": [
+        25,
+        28
+       ],
+       "score": 0.301
+      },
+      {
+       "path": "README.md",
+       "lines": [
+        77,
+        85
+       ],
+       "score": 0.29
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        64,
+        73
+       ],
+       "score": 0.287
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9712,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4571,
+    "prompt_tokens": 1372,
+    "completion_tokens": 17,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9804,
+    "step": 1,
+    "name": "search_code",
+    "args": {
+     "query": "SPY"
+    },
+    "latency_ms": 92,
+    "error": null,
+    "result_summary": "5 hits: ARCHITECTURE.md:34-38 (0.334), ARCHITECTURE.md:52-59 (0.33), ARCHITECTURE.md:36-40 (0.324), ARCHITECTURE.md:51-58 (0.273), README.md:1-10 (0.253)",
+    "meta": {
+     "hits": [
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        34,
+        38
+       ],
+       "score": 0.334
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        52,
+        59
+       ],
+       "score": 0.33
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        36,
+        40
+       ],
+       "score": 0.324
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        51,
+        58
+       ],
+       "score": 0.273
+      },
+      {
+       "path": "README.md",
+       "lines": [
+        1,
+        10
+       ],
+       "score": 0.253
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 15238,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5434,
+    "prompt_tokens": 2579,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 15342,
+    "step": 2,
+    "name": "search_code",
+    "args": {
+     "query": "market_proxy"
+    },
+    "latency_ms": 104,
+    "error": null,
+    "result_summary": "5 hits: backend/app/models.py:25-28 (0.395), backend/app/fetcher.py:16-22 (0.365), backend/app/demo_seed.py:41-59 (0.359), backend/tests/test_signals.py:64-67 (0.341), README.md:51-79 (0.337)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/models.py",
+       "lines": [
+        25,
+        28
+       ],
+       "score": 0.395
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        16,
+        22
+       ],
+       "score": 0.365
+      },
+      {
+       "path": "backend/app/demo_seed.py",
+       "lines": [
+        41,
+        59
+       ],
+       "score": 0.359
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        64,
+        67
+       ],
+       "score": 0.341
+      },
+      {
+       "path": "README.md",
+       "lines": [
+        51,
+        79
+       ],
+       "score": 0.337
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20087,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4745,
+    "prompt_tokens": 3482,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 20197,
+    "step": 3,
+    "name": "search_code",
+    "args": {
+     "query": "index_symbol"
+    },
+    "latency_ms": 110,
+    "error": null,
+    "result_summary": "5 hits: backend/app/fetcher.py:35-53 (0.383), backend/app/fetcher.py:16-22 (0.341), backend/tests/test_signals.py:58-61 (0.329), backend/tests/test_engine.py:42-46 (0.328), backend/tests/test_signals.py:70-72 (0.324)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        35,
+        53
+       ],
+       "score": 0.383
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        16,
+        22
+       ],
+       "score": 0.341
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        58,
+        61
+       ],
+       "score": 0.329
+      },
+      {
+       "path": "backend/tests/test_engine.py",
+       "lines": [
+        42,
+        46
+       ],
+       "score": 0.328
+      },
+      {
+       "path": "backend/tests/test_signals.py",
+       "lines": [
+        70,
+        72
+       ],
+       "score": 0.324
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 25019,
+    "step": 4,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4822,
+    "prompt_tokens": 4272,
+    "completion_tokens": 20,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 25110,
+    "step": 4,
+    "name": "search_code",
+    "args": {
+     "query": "settings.index_symbol"
+    },
+    "latency_ms": 89,
+    "error": null,
+    "result_summary": "5 hits: backend/app/config.py:40-42 (0.437), backend/app/fetcher.py:16-22 (0.357), backend/app/fetcher.py:35-53 (0.337), backend/app/config.py:17-36 (0.329), backend/app/demo_seed.py:41-59 (0.328)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/config.py",
+       "lines": [
+        40,
+        42
+       ],
+       "score": 0.437
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        16,
+        22
+       ],
+       "score": 0.357
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        35,
+        53
+       ],
+       "score": 0.337
+      },
+      {
+       "path": "backend/app/config.py",
+       "lines": [
+        17,
+        36
+       ],
+       "score": 0.329
+      },
+      {
+       "path": "backend/app/demo_seed.py",
+       "lines": [
+        41,
+        59
+       ],
+       "score": 0.328
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 30341,
+    "step": 5,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5232,
+    "prompt_tokens": 5292,
+    "completion_tokens": 34,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 35629,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5287,
+    "prompt_tokens": 5150,
+    "completion_tokens": 102,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "SPY is used as the market proxy ticker symbol.",
+   "cited_files": [
+    {
+     "path": "backend/app/config.py",
+     "lines": [
+      30,
+      42
+     ]
+    },
+    {
+     "path": "ARCHITECTURE.md",
+     "lines": [
+      34,
+      38
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "how many recent daily bars does the engine use as a stock's baseline, and how many days of bars does the fetcher request": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "How many recent daily bars does the engine use as a stock's baseline, and how many days of bars does the fetcher request?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4719,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4719,
+    "prompt_tokens": 402,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4856,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "baseline"
+    },
+    "latency_ms": 137,
+    "error": null,
+    "result_summary": "5 hits: frontend/src/index.css:431-454 (0.377), frontend/src/index.css:476-500 (0.357), frontend/src/index.css:151-179 (0.327), frontend/src/index.css:530-560 (0.324), frontend/src/index.css:401-433 (0.313)",
+    "meta": {
+     "hits": [
+      {
+       "path": "frontend/src/index.css",
+       "lines": [
+        431,
+        454
+       ],
+       "score": 0.377
+      },
+      {
+       "path": "frontend/src/index.css",
+       "lines": [
+        476,
+        500
+       ],
+       "score": 0.357
+      },
+      {
+       "path": "frontend/src/index.css",
+       "lines": [
+        151,
+        179
+       ],
+       "score": 0.327
+      },
+      {
+       "path": "frontend/src/index.css",
+       "lines": [
+        530,
+        560
+       ],
+       "score": 0.324
+      },
+      {
+       "path": "frontend/src/index.css",
+       "lines": [
+        401,
+        433
+       ],
+       "score": 0.313
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9283,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4426,
+    "prompt_tokens": 1869,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9291,
+    "step": 1,
+    "name": "list_files",
+    "args": {
+     "directory": "."
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "5 entries",
+    "meta": {
+     "directory": ".",
+     "count": 5
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 14219,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4928,
+    "prompt_tokens": 1933,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 14220,
+    "step": 2,
+    "name": "list_files",
+    "args": {
+     "directory": "backend"
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "5 entries",
+    "meta": {
+     "directory": "backend",
+     "count": 5
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 19240,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5020,
+    "prompt_tokens": 2012,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 19242,
+    "step": 3,
+    "name": "list_files",
+    "args": {
+     "directory": "backend/app"
+    },
+    "latency_ms": 2,
+    "error": null,
+    "result_summary": "19 entries",
+    "meta": {
+     "directory": "backend/app",
+     "count": 19
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 24574,
+    "step": 4,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5332,
+    "prompt_tokens": 2233,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 24695,
+    "step": 4,
+    "name": "search_code",
+    "args": {
+     "query": "days"
+    },
+    "latency_ms": 121,
+    "error": null,
+    "result_summary": "5 hits: backend/app/feed.py:20-24 (0.374), backend/app/fetcher.py:123-126 (0.321), backend/app/schemas.py:50-53 (0.274), ARCHITECTURE.md:77-87 (0.239), backend/app/schemas.py:67-69 (0.23)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        20,
+        24
+       ],
+       "score": 0.374
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        123,
+        126
+       ],
+       "score": 0.321
+      },
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        50,
+        53
+       ],
+       "score": 0.274
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        77,
+        87
+       ],
+       "score": 0.239
+      },
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        67,
+        69
+       ],
+       "score": 0.23
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 29797,
+    "step": 5,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5102,
+    "prompt_tokens": 2882,
+    "completion_tokens": 20,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 29884,
+    "step": 5,
+    "name": "search_code",
+    "args": {
+     "query": "fetch_daily_bars"
+    },
+    "latency_ms": 86,
+    "error": null,
+    "result_summary": "5 hits: backend/app/fetcher.py:123-126 (0.766), backend/app/fetcher.py:71-81 (0.656), backend/app/fetcher.py:106-120 (0.599), backend/app/fetcher.py:56-73 (0.535), backend/app/detail.py:18-32 (0.523)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        123,
+        126
+       ],
+       "score": 0.766
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        71,
+        81
+       ],
+       "score": 0.656
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        106,
+        120
+       ],
+       "score": 0.599
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        56,
+        73
+       ],
+       "score": 0.535
+      },
+      {
+       "path": "backend/app/detail.py",
+       "lines": [
+        18,
+        32
+       ],
+       "score": 0.523
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 34568,
+    "step": 6,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4684,
+    "prompt_tokens": 3951,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 34672,
+    "step": 6,
+    "name": "search_code",
+    "args": {
+     "query": "engine"
+    },
+    "latency_ms": 103,
+    "error": null,
+    "result_summary": "5 hits: frontend/src/components/StockDetail.jsx:48-60 (0.265), ARCHITECTURE.md:20-30 (0.259), frontend/src/components/StockDetail.jsx:51-66 (0.251), backend/app/engine.py:19-25 (0.249), frontend/src/index.css:669-691 (0.248)",
+    "meta": {
+     "hits": [
+      {
+       "path": "frontend/src/components/StockDetail.jsx",
+       "lines": [
+        48,
+        60
+       ],
+       "score": 0.265
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        20,
+        30
+       ],
+       "score": 0.259
+      },
+      {
+       "path": "frontend/src/components/StockDetail.jsx",
+       "lines": [
+        51,
+        66
+       ],
+       "score": 0.251
+      },
+      {
+       "path": "backend/app/engine.py",
+       "lines": [
+        19,
+        25
+       ],
+       "score": 0.249
+      },
+      {
+       "path": "frontend/src/index.css",
+       "lines": [
+        669,
+        691
+       ],
+       "score": 0.248
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 39598,
+    "step": 7,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4926,
+    "prompt_tokens": 5063,
+    "completion_tokens": 36,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 39599,
+    "step": 7,
+    "name": "read_file",
+    "args": {
+     "path": "backend/app/engine.py",
+     "end_line": 150,
+     "start_line": 1
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/engine.py:1-100 of 100",
+    "meta": {
+     "path": "backend/app/engine.py",
+     "lines": [
+      1,
+      100
+     ],
+     "total_lines": 100
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 45482,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5883,
+    "prompt_tokens": 6222,
+    "completion_tokens": 168,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "The engine uses settings.baseline_bars (which defaults to 30 bars) as a stock's baseline, and the fetcher requests 35 days of daily bars.",
+   "cited_files": [
+    {
+     "path": "backend/app/engine.py",
+     "lines": [
+      63,
+      68
+     ]
+    },
+    {
+     "path": "backend/app/fetcher.py",
+     "lines": [
+      56,
+      60
+     ]
+    },
+    {
+     "path": "backend/app/fetcher.py",
+     "lines": [
+      123,
+      126
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "when does the scheduled daily data refresh run": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "When does the scheduled daily data refresh run?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4444,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4444,
+    "prompt_tokens": 383,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4567,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "daily data refresh"
+    },
+    "latency_ms": 122,
+    "error": null,
+    "result_summary": "5 hits: backend/app/fetcher.py:123-126 (0.517), ARCHITECTURE.md:51-58 (0.469), ARCHITECTURE.md:52-59 (0.459), backend/app/scheduler.py:7-13 (0.452), ARCHITECTURE.md:71-79 (0.444)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        123,
+        126
+       ],
+       "score": 0.517
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        51,
+        58
+       ],
+       "score": 0.469
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        52,
+        59
+       ],
+       "score": 0.459
+      },
+      {
+       "path": "backend/app/scheduler.py",
+       "lines": [
+        7,
+        13
+       ],
+       "score": 0.452
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        71,
+        79
+       ],
+       "score": 0.444
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9464,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4898,
+    "prompt_tokens": 1362,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9570,
+    "step": 1,
+    "name": "search_code",
+    "args": {
+     "query": "scheduler"
+    },
+    "latency_ms": 105,
+    "error": null,
+    "result_summary": "5 hits: backend/app/scheduler.py:16-25 (0.486), backend/app/scheduler.py:1-6 (0.468), backend/app/scheduler.py:7-13 (0.447), backend/app/main.py:1-18 (0.376), ARCHITECTURE.md:51-58 (0.36)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/scheduler.py",
+       "lines": [
+        16,
+        25
+       ],
+       "score": 0.486
+      },
+      {
+       "path": "backend/app/scheduler.py",
+       "lines": [
+        1,
+        6
+       ],
+       "score": 0.468
+      },
+      {
+       "path": "backend/app/scheduler.py",
+       "lines": [
+        7,
+        13
+       ],
+       "score": 0.447
+      },
+      {
+       "path": "backend/app/main.py",
+       "lines": [
+        1,
+        18
+       ],
+       "score": 0.376
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        51,
+        58
+       ],
+       "score": 0.36
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 14861,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5291,
+    "prompt_tokens": 2166,
+    "completion_tokens": 35,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 14863,
+    "step": 2,
+    "name": "read_file",
+    "args": {
+     "end_line": 26,
+     "path": "backend/app/scheduler.py",
+     "start_line": 1
+    },
+    "latency_ms": 2,
+    "error": null,
+    "result_summary": "read backend/app/scheduler.py:1-25 of 25",
+    "meta": {
+     "path": "backend/app/scheduler.py",
+     "lines": [
+      1,
+      25
+     ],
+     "total_lines": 25
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20552,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5688,
+    "prompt_tokens": 2535,
+    "completion_tokens": 93,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 25338,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4786,
+    "prompt_tokens": 2452,
+    "completion_tokens": 139,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "The scheduled daily data refresh runs Monday through Friday at 22:00 (10:00 PM) server-local time, as configured by the cron scheduler in the backend.",
+   "cited_files": [
+    {
+     "path": "backend/app/scheduler.py",
+     "lines": [
+      16,
+      25
+     ]
+    },
+    {
+     "path": "ARCHITECTURE.md",
+     "lines": [
+      51,
+      58
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "during the daily refresh, what happens if fetching data for one stock fails": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "During the daily refresh, what happens if fetching data for one stock fails?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4545,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4544,
+    "prompt_tokens": 389,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4664,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "refresh"
+    },
+    "latency_ms": 119,
+    "error": null,
+    "result_summary": "5 hits: backend/app/refresh.py:37-40 (0.411), ARCHITECTURE.md:71-79 (0.391), backend/app/refresh.py:1-9 (0.388), frontend/src/components/Feed.jsx:16-44 (0.372), frontend/src/components/Watchlist.jsx:18-52 (0.359)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/refresh.py",
+       "lines": [
+        37,
+        40
+       ],
+       "score": 0.411
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        71,
+        79
+       ],
+       "score": 0.391
+      },
+      {
+       "path": "backend/app/refresh.py",
+       "lines": [
+        1,
+        9
+       ],
+       "score": 0.388
+      },
+      {
+       "path": "frontend/src/components/Feed.jsx",
+       "lines": [
+        16,
+        44
+       ],
+       "score": 0.372
+      },
+      {
+       "path": "frontend/src/components/Watchlist.jsx",
+       "lines": [
+        18,
+        52
+       ],
+       "score": 0.359
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9828,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5164,
+    "prompt_tokens": 1379,
+    "completion_tokens": 36,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9830,
+    "step": 1,
+    "name": "read_file",
+    "args": {
+     "start_line": 1,
+     "end_line": 100,
+     "path": "backend/app/refresh.py"
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/refresh.py:1-40 of 40",
+    "meta": {
+     "path": "backend/app/refresh.py",
+     "lines": [
+      1,
+      40
+     ],
+     "total_lines": 40
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 15443,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5613,
+    "prompt_tokens": 1897,
+    "completion_tokens": 112,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20117,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4674,
+    "prompt_tokens": 1833,
+    "completion_tokens": 113,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "When fetching data for a stock fails during the daily refresh, a FetchError is caught for that individual instrument, the error counter is incremented, and the loop continues to the next stock without aborting the rest of the refresh run.",
+   "cited_files": [
+    {
+     "path": "backend/app/refresh.py",
+     "lines": [
+      29,
+      40
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "when a user adds a ticker to their watchlist, when is its price data fetched": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "When a user adds a ticker to their watchlist, when is its price data fetched?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4797,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4797,
+    "prompt_tokens": 391,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4908,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "watchlist"
+    },
+    "latency_ms": 111,
+    "error": null,
+    "result_summary": "5 hits: frontend/src/components/Watchlist.jsx:50-60 (0.512), frontend/src/components/Watchlist.jsx:51-72 (0.497), backend/app/watchlist.py:79-82 (0.482), README.md:1-10 (0.429), backend/app/watchlist.py:20-27 (0.429)",
+    "meta": {
+     "hits": [
+      {
+       "path": "frontend/src/components/Watchlist.jsx",
+       "lines": [
+        50,
+        60
+       ],
+       "score": 0.512
+      },
+      {
+       "path": "frontend/src/components/Watchlist.jsx",
+       "lines": [
+        51,
+        72
+       ],
+       "score": 0.497
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        79,
+        82
+       ],
+       "score": 0.482
+      },
+      {
+       "path": "README.md",
+       "lines": [
+        1,
+        10
+       ],
+       "score": 0.429
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        20,
+        27
+       ],
+       "score": 0.429
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9735,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4826,
+    "prompt_tokens": 1345,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9838,
+    "step": 1,
+    "name": "search_code",
+    "args": {
+     "query": "add_watchlist"
+    },
+    "latency_ms": 103,
+    "error": null,
+    "result_summary": "5 hits: backend/app/watchlist.py:102-111 (0.592), backend/tests/test_feed.py:6-8 (0.564), backend/tests/test_watchlist.py:19-22 (0.56), backend/app/watchlist.py:79-82 (0.539), frontend/src/components/Watchlist.jsx:50-60 (0.538)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        102,
+        111
+       ],
+       "score": 0.592
+      },
+      {
+       "path": "backend/tests/test_feed.py",
+       "lines": [
+        6,
+        8
+       ],
+       "score": 0.564
+      },
+      {
+       "path": "backend/tests/test_watchlist.py",
+       "lines": [
+        19,
+        22
+       ],
+       "score": 0.56
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        79,
+        82
+       ],
+       "score": 0.539
+      },
+      {
+       "path": "frontend/src/components/Watchlist.jsx",
+       "lines": [
+        50,
+        60
+       ],
+       "score": 0.538
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 14591,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4753,
+    "prompt_tokens": 2075,
+    "completion_tokens": 37,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 14593,
+    "step": 2,
+    "name": "read_file",
+    "args": {
+     "path": "backend/app/watchlist.py",
+     "start_line": 50,
+     "end_line": 120
+    },
+    "latency_ms": 2,
+    "error": null,
+    "result_summary": "read backend/app/watchlist.py:50-120 of 131",
+    "meta": {
+     "path": "backend/app/watchlist.py",
+     "lines": [
+      50,
+      120
+     ],
+     "total_lines": 131
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20787,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 6194,
+    "prompt_tokens": 3148,
+    "completion_tokens": 146,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 25330,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4542,
+    "prompt_tokens": 3118,
+    "completion_tokens": 94,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "When a user adds a ticker to their watchlist, its price data is fetched asynchronously as a background task immediately after the HTTP response is sent back to the client.",
+   "cited_files": [
+    {
+     "path": "backend/app/watchlist.py",
+     "lines": [
+      85,
+      111
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "what http status code is returned if a user adds a ticker that's already in their watchlist": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "What HTTP status code is returned if a user adds a ticker that's already in their watchlist?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4603,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4603,
+    "prompt_tokens": 394,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4689,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "watchlist"
+    },
+    "latency_ms": 86,
+    "error": null,
+    "result_summary": "5 hits: frontend/src/components/Watchlist.jsx:50-60 (0.512), frontend/src/components/Watchlist.jsx:51-72 (0.497), backend/app/watchlist.py:79-82 (0.482), README.md:1-10 (0.429), backend/app/watchlist.py:20-27 (0.429)",
+    "meta": {
+     "hits": [
+      {
+       "path": "frontend/src/components/Watchlist.jsx",
+       "lines": [
+        50,
+        60
+       ],
+       "score": 0.512
+      },
+      {
+       "path": "frontend/src/components/Watchlist.jsx",
+       "lines": [
+        51,
+        72
+       ],
+       "score": 0.497
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        79,
+        82
+       ],
+       "score": 0.482
+      },
+      {
+       "path": "README.md",
+       "lines": [
+        1,
+        10
+       ],
+       "score": 0.429
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        20,
+        27
+       ],
+       "score": 0.429
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9824,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5135,
+    "prompt_tokens": 1348,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9913,
+    "step": 1,
+    "name": "search_code",
+    "args": {
+     "query": "add_watchlist"
+    },
+    "latency_ms": 89,
+    "error": null,
+    "result_summary": "5 hits: backend/app/watchlist.py:102-111 (0.592), backend/tests/test_feed.py:6-8 (0.564), backend/tests/test_watchlist.py:19-22 (0.56), backend/app/watchlist.py:79-82 (0.539), frontend/src/components/Watchlist.jsx:50-60 (0.538)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        102,
+        111
+       ],
+       "score": 0.592
+      },
+      {
+       "path": "backend/tests/test_feed.py",
+       "lines": [
+        6,
+        8
+       ],
+       "score": 0.564
+      },
+      {
+       "path": "backend/tests/test_watchlist.py",
+       "lines": [
+        19,
+        22
+       ],
+       "score": 0.56
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        79,
+        82
+       ],
+       "score": 0.539
+      },
+      {
+       "path": "frontend/src/components/Watchlist.jsx",
+       "lines": [
+        50,
+        60
+       ],
+       "score": 0.538
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 14711,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4798,
+    "prompt_tokens": 2078,
+    "completion_tokens": 37,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 14712,
+    "step": 2,
+    "name": "read_file",
+    "args": {
+     "path": "backend/app/watchlist.py",
+     "end_line": 115,
+     "start_line": 85
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/watchlist.py:85-115 of 131",
+    "meta": {
+     "path": "backend/app/watchlist.py",
+     "lines": [
+      85,
+      115
+     ],
+     "total_lines": 131
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20218,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5506,
+    "prompt_tokens": 2613,
+    "completion_tokens": 51,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 25491,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5272,
+    "prompt_tokens": 2488,
+    "completion_tokens": 89,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "If a user adds a ticker that is already in their watchlist, the application returns an HTTP status code of 409 Conflict.",
+   "cited_files": [
+    {
+     "path": "backend/app/watchlist.py",
+     "lines": [
+      97,
+      103
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "how does the feed decide how far back to show flags for a returning user": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "How does the feed decide how far back to show flags for a returning user?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4503,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4503,
+    "prompt_tokens": 390,
+    "completion_tokens": 21,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4586,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "flag feed returning user time limit"
+    },
+    "latency_ms": 83,
+    "error": null,
+    "result_summary": "5 hits: README.md:91-105 (0.476), frontend/src/components/FeedCard.jsx:31-46 (0.455), backend/tests/test_feed.py:57-63 (0.434), backend/app/schemas.py:38-47 (0.433), backend/app/refresh.py:37-40 (0.431)",
+    "meta": {
+     "hits": [
+      {
+       "path": "README.md",
+       "lines": [
+        91,
+        105
+       ],
+       "score": 0.476
+      },
+      {
+       "path": "frontend/src/components/FeedCard.jsx",
+       "lines": [
+        31,
+        46
+       ],
+       "score": 0.455
+      },
+      {
+       "path": "backend/tests/test_feed.py",
+       "lines": [
+        57,
+        63
+       ],
+       "score": 0.434
+      },
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        38,
+        47
+       ],
+       "score": 0.433
+      },
+      {
+       "path": "backend/app/refresh.py",
+       "lines": [
+        37,
+        40
+       ],
+       "score": 0.431
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9624,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5038,
+    "prompt_tokens": 1305,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9718,
+    "step": 1,
+    "name": "search_code",
+    "args": {
+     "query": "last_seen"
+    },
+    "latency_ms": 94,
+    "error": null,
+    "result_summary": "5 hits: backend/app/feed.py:36-50 (0.471), backend/app/feed.py:93-97 (0.449), backend/app/watchlist.py:20-27 (0.446), backend/app/detail.py:95-110 (0.41), backend/app/models.py:12-24 (0.387)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        36,
+        50
+       ],
+       "score": 0.471
+      },
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        93,
+        97
+       ],
+       "score": 0.449
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        20,
+        27
+       ],
+       "score": 0.446
+      },
+      {
+       "path": "backend/app/detail.py",
+       "lines": [
+        95,
+        110
+       ],
+       "score": 0.41
+      },
+      {
+       "path": "backend/app/models.py",
+       "lines": [
+        12,
+        24
+       ],
+       "score": 0.387
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 14640,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4922,
+    "prompt_tokens": 2312,
+    "completion_tokens": 19,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 14736,
+    "step": 2,
+    "name": "search_code",
+    "args": {
+     "query": "def get_feed"
+    },
+    "latency_ms": 96,
+    "error": null,
+    "result_summary": "5 hits: backend/tests/test_feed.py:26-30 (0.6), backend/app/schemas.py:38-47 (0.598), backend/app/schemas.py:50-53 (0.59), backend/app/feed.py:93-97 (0.577), backend/app/feed.py:1-14 (0.566)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/tests/test_feed.py",
+       "lines": [
+        26,
+        30
+       ],
+       "score": 0.6
+      },
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        38,
+        47
+       ],
+       "score": 0.598
+      },
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        50,
+        53
+       ],
+       "score": 0.59
+      },
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        93,
+        97
+       ],
+       "score": 0.577
+      },
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        1,
+        14
+       ],
+       "score": 0.566
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 19611,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4875,
+    "prompt_tokens": 2977,
+    "completion_tokens": 35,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 19613,
+    "step": 3,
+    "name": "read_file",
+    "args": {
+     "path": "backend/app/feed.py",
+     "end_line": 95,
+     "start_line": 1
+    },
+    "latency_ms": 2,
+    "error": null,
+    "result_summary": "read backend/app/feed.py:1-95 of 97",
+    "meta": {
+     "path": "backend/app/feed.py",
+     "lines": [
+      1,
+      95
+     ],
+     "total_lines": 97
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 24778,
+    "step": 4,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5165,
+    "prompt_tokens": 4304,
+    "completion_tokens": 21,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 24870,
+    "step": 4,
+    "name": "search_code",
+    "args": {
+     "query": "lookback_cap_days"
+    },
+    "latency_ms": 92,
+    "error": null,
+    "result_summary": "5 hits: backend/app/feed.py:20-24 (0.578), backend/app/schemas.py:67-69 (0.452), ARCHITECTURE.md:44-54 (0.426), backend/app/config.py:17-36 (0.421), backend/app/detail.py:35-45 (0.41)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        20,
+        24
+       ],
+       "score": 0.578
+      },
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        67,
+        69
+       ],
+       "score": 0.452
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        44,
+        54
+       ],
+       "score": 0.426
+      },
+      {
+       "path": "backend/app/config.py",
+       "lines": [
+        17,
+        36
+       ],
+       "score": 0.421
+      },
+      {
+       "path": "backend/app/detail.py",
+       "lines": [
+        35,
+        45
+       ],
+       "score": 0.41
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 31744,
+    "step": 5,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 6875,
+    "prompt_tokens": 5355,
+    "completion_tokens": 588,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 35621,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 3876,
+    "prompt_tokens": 5767,
+    "completion_tokens": 243,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "The feed calculates how far back to show flags for a returning user using the user's `last_seen_at` timestamp compared against `lookback_cap_days` (defaulted to 30 days). If the user has never visited, it defaults to the 30-day cap. Otherwise, it determines the number of days since their last visit, clamps that gap between 0 and 30 days, and filters out any change events older than that calculated cutoff date. The cursor only updates when the user explicitly marks items as reviewed via the `/seen` endpoint.",
+   "cited_files": [
+    {
+     "path": "backend/app/feed.py",
+     "lines": [
+      20,
+      25
+     ]
+    },
+    {
+     "path": "backend/app/feed.py",
+     "lines": [
+      53,
+      75
+     ]
+    },
+    {
+     "path": "ARCHITECTURE.md",
+     "lines": [
+      44,
+      54
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "does loading the feed update the user's last-seen timestamp": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "Does loading the feed update the user's last-seen timestamp?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4402,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4402,
+    "prompt_tokens": 388,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4495,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "last_seen"
+    },
+    "latency_ms": 93,
+    "error": null,
+    "result_summary": "5 hits: backend/app/feed.py:36-50 (0.471), backend/app/feed.py:93-97 (0.449), backend/app/watchlist.py:20-27 (0.446), backend/app/detail.py:95-110 (0.41), backend/app/models.py:12-24 (0.387)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        36,
+        50
+       ],
+       "score": 0.471
+      },
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        93,
+        97
+       ],
+       "score": 0.449
+      },
+      {
+       "path": "backend/app/watchlist.py",
+       "lines": [
+        20,
+        27
+       ],
+       "score": 0.446
+      },
+      {
+       "path": "backend/app/detail.py",
+       "lines": [
+        95,
+        110
+       ],
+       "score": 0.41
+      },
+      {
+       "path": "backend/app/models.py",
+       "lines": [
+        12,
+        24
+       ],
+       "score": 0.387
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9226,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4730,
+    "prompt_tokens": 1395,
+    "completion_tokens": 17,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9320,
+    "step": 1,
+    "name": "search_code",
+    "args": {
+     "query": "def feed"
+    },
+    "latency_ms": 94,
+    "error": null,
+    "result_summary": "5 hits: backend/app/schemas.py:38-47 (0.444), frontend/src/index.css:251-277 (0.427), backend/app/schemas.py:50-53 (0.422), backend/tests/test_feed.py:26-30 (0.391), backend/app/feed.py:1-14 (0.377)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        38,
+        47
+       ],
+       "score": 0.444
+      },
+      {
+       "path": "frontend/src/index.css",
+       "lines": [
+        251,
+        277
+       ],
+       "score": 0.427
+      },
+      {
+       "path": "backend/app/schemas.py",
+       "lines": [
+        50,
+        53
+       ],
+       "score": 0.422
+      },
+      {
+       "path": "backend/tests/test_feed.py",
+       "lines": [
+        26,
+        30
+       ],
+       "score": 0.391
+      },
+      {
+       "path": "backend/app/feed.py",
+       "lines": [
+        1,
+        14
+       ],
+       "score": 0.377
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 14330,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5011,
+    "prompt_tokens": 2214,
+    "completion_tokens": 35,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 14331,
+    "step": 2,
+    "name": "read_file",
+    "args": {
+     "end_line": 95,
+     "path": "backend/app/feed.py",
+     "start_line": 1
+    },
+    "latency_ms": 0,
+    "error": null,
+    "result_summary": "read backend/app/feed.py:1-95 of 97",
+    "meta": {
+     "path": "backend/app/feed.py",
+     "lines": [
+      1,
+      95
+     ],
+     "total_lines": 97
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20377,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 6046,
+    "prompt_tokens": 3541,
+    "completion_tokens": 140,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 25090,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4712,
+    "prompt_tokens": 3505,
+    "completion_tokens": 93,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "No, loading the feed via GET /feed does not update the user's last-seen timestamp; that is handled separately by the POST /seen endpoint.",
+   "cited_files": [
+    {
+     "path": "backend/app/feed.py",
+     "lines": [
+      53,
+      97
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "if the fetcher re-fetches a daily bar that's already stored, is the stored bar updated with the new values": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "If the fetcher re-fetches a daily bar that's already stored, is the stored bar updated with the new values?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4999,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4999,
+    "prompt_tokens": 401,
+    "completion_tokens": 17,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 5078,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "fetcher"
+    },
+    "latency_ms": 79,
+    "error": null,
+    "result_summary": "5 hits: backend/app/fetcher.py:14-15 (0.458), ARCHITECTURE.md:64-73 (0.436), ARCHITECTURE.md:1-15 (0.38), backend/app/fetcher.py:123-126 (0.375), frontend/src/components/Watchlist.jsx:18-52 (0.359)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        14,
+        15
+       ],
+       "score": 0.458
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        64,
+        73
+       ],
+       "score": 0.436
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        1,
+        15
+       ],
+       "score": 0.38
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        123,
+        126
+       ],
+       "score": 0.375
+      },
+      {
+       "path": "frontend/src/components/Watchlist.jsx",
+       "lines": [
+        18,
+        52
+       ],
+       "score": 0.359
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9646,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4568,
+    "prompt_tokens": 1409,
+    "completion_tokens": 18,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9768,
+    "step": 1,
+    "name": "search_code",
+    "args": {
+     "query": "store_bars"
+    },
+    "latency_ms": 121,
+    "error": null,
+    "result_summary": "5 hits: backend/app/fetcher.py:106-120 (0.627), backend/app/fetcher.py:123-126 (0.531), backend/app/models.py:25-28 (0.432), backend/app/fetcher.py:71-81 (0.409), backend/app/fetcher.py:14-15 (0.389)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        106,
+        120
+       ],
+       "score": 0.627
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        123,
+        126
+       ],
+       "score": 0.531
+      },
+      {
+       "path": "backend/app/models.py",
+       "lines": [
+        25,
+        28
+       ],
+       "score": 0.432
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        71,
+        81
+       ],
+       "score": 0.409
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        14,
+        15
+       ],
+       "score": 0.389
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 15055,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5287,
+    "prompt_tokens": 2106,
+    "completion_tokens": 39,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 15057,
+    "step": 2,
+    "name": "read_file",
+    "args": {
+     "path": "backend/app/fetcher.py",
+     "start_line": 100,
+     "end_line": 126
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/fetcher.py:100-126 of 126",
+    "meta": {
+     "path": "backend/app/fetcher.py",
+     "lines": [
+      100,
+      126
+     ],
+     "total_lines": 126
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20553,
+    "step": 3,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 5496,
+    "prompt_tokens": 2577,
+    "completion_tokens": 80,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 25445,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4892,
+    "prompt_tokens": 2481,
+    "completion_tokens": 102,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "No, stored bars are not updated. The fetcher checks if a bar's date already exists in the database, and if so, it skips it and only inserts new bars.",
+   "cited_files": [
+    {
+     "path": "backend/app/fetcher.py",
+     "lines": [
+      106,
+      120
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "how does the fetcher avoid leaking the data provider's api key in error messages": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "How does the fetcher avoid leaking the data provider's API key in error messages?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4732,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4732,
+    "prompt_tokens": 392,
+    "completion_tokens": 17,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4856,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "api key"
+    },
+    "latency_ms": 124,
+    "error": null,
+    "result_summary": "5 hits: backend/app/auth.py:1-12 (0.394), backend/app/search.py:1-8 (0.389), backend/app/fetcher.py:56-73 (0.378), backend/app/deps.py:1-11 (0.377), frontend/src/api.js:1-14 (0.366)",
+    "meta": {
+     "hits": [
+      {
+       "path": "backend/app/auth.py",
+       "lines": [
+        1,
+        12
+       ],
+       "score": 0.394
+      },
+      {
+       "path": "backend/app/search.py",
+       "lines": [
+        1,
+        8
+       ],
+       "score": 0.389
+      },
+      {
+       "path": "backend/app/fetcher.py",
+       "lines": [
+        56,
+        73
+       ],
+       "score": 0.378
+      },
+      {
+       "path": "backend/app/deps.py",
+       "lines": [
+        1,
+        11
+       ],
+       "score": 0.377
+      },
+      {
+       "path": "frontend/src/api.js",
+       "lines": [
+        1,
+        14
+       ],
+       "score": 0.366
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9762,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4906,
+    "prompt_tokens": 1288,
+    "completion_tokens": 37,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9765,
+    "step": 1,
+    "name": "read_file",
+    "args": {
+     "path": "backend/app/fetcher.py",
+     "end_line": 100,
+     "start_line": 1
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read backend/app/fetcher.py:1-100 of 126",
+    "meta": {
+     "path": "backend/app/fetcher.py",
+     "lines": [
+      1,
+      100
+     ],
+     "total_lines": 126
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 16316,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 6552,
+    "prompt_tokens": 2773,
+    "completion_tokens": 254,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20857,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4540,
+    "prompt_tokens": 2851,
+    "completion_tokens": 163,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "The fetcher prevents leaking the data provider's API key by explicitly raising custom FetchError exceptions with `from None`, which avoids chaining the underlying httpx exception whose URL carries the api key parameter. It also constructs safe, sanitized error messages containing only the HTTP status code and symbol.",
+   "cited_files": [
+    {
+     "path": "backend/app/fetcher.py",
+     "lines": [
+      26,
+      34
+     ]
+    },
+    {
+     "path": "backend/app/fetcher.py",
+     "lines": [
+      63,
+      72
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ },
+ "does the backend use redis or another caching layer": {
+  "events": [
+   {
+    "type": "start",
+    "t_ms": 0,
+    "question": "Does the backend use Redis or another caching layer?",
+    "model": "gemini-3.5-flash-lite",
+    "fallbacks": [],
+    "max_steps": 8
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 4468,
+    "step": 0,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4467,
+    "prompt_tokens": 384,
+    "completion_tokens": 16,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 4558,
+    "step": 0,
+    "name": "search_code",
+    "args": {
+     "query": "redis"
+    },
+    "latency_ms": 91,
+    "error": null,
+    "result_summary": "5 hits: ARCHITECTURE.md:56-66 (0.443), ARCHITECTURE.md:52-59 (0.355), frontend/src/index.css:15-30 (0.323), frontend/src/index.css:1-17 (0.209), frontend/src/index.css:28-47 (0.208)",
+    "meta": {
+     "hits": [
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        56,
+        66
+       ],
+       "score": 0.443
+      },
+      {
+       "path": "ARCHITECTURE.md",
+       "lines": [
+        52,
+        59
+       ],
+       "score": 0.355
+      },
+      {
+       "path": "frontend/src/index.css",
+       "lines": [
+        15,
+        30
+       ],
+       "score": 0.323
+      },
+      {
+       "path": "frontend/src/index.css",
+       "lines": [
+        1,
+        17
+       ],
+       "score": 0.209
+      },
+      {
+       "path": "frontend/src/index.css",
+       "lines": [
+        28,
+        47
+       ],
+       "score": 0.208
+      }
+     ]
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 9489,
+    "step": 1,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4931,
+    "prompt_tokens": 1880,
+    "completion_tokens": 32,
+    "reasoning": null,
+    "n_tool_calls": 1
+   },
+   {
+    "type": "tool_call",
+    "t_ms": 9491,
+    "step": 1,
+    "name": "read_file",
+    "args": {
+     "start_line": 50,
+     "end_line": 70,
+     "path": "ARCHITECTURE.md"
+    },
+    "latency_ms": 1,
+    "error": null,
+    "result_summary": "read ARCHITECTURE.md:50-70 of 107",
+    "meta": {
+     "path": "ARCHITECTURE.md",
+     "lines": [
+      50,
+      70
+     ],
+     "total_lines": 107
+    }
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 15502,
+    "step": 2,
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 6011,
+    "prompt_tokens": 2515,
+    "completion_tokens": 74,
+    "reasoning": null,
+    "n_tool_calls": 0
+   },
+   {
+    "type": "llm_call",
+    "t_ms": 20314,
+    "step": "finalize-0",
+    "model": "gemini-3.5-flash-lite",
+    "latency_ms": 4812,
+    "prompt_tokens": 2413,
+    "completion_tokens": 89,
+    "reasoning": null,
+    "n_tool_calls": 0
+   }
+  ],
+  "answer": {
+   "answer": "No, the backend does not use Redis or any separate caching layer. The database table change_events acts as the cache, and adding Redis is intentionally avoided.",
+   "cited_files": [
+    {
+     "path": "ARCHITECTURE.md",
+     "lines": [
+      59,
+      61
+     ]
+    }
+   ],
+   "confidence": "high"
+  }
+ }
+}

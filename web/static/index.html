@@ -118,6 +118,9 @@ h1 {
 .ask-btn:active { transform: translateY(0); }
 .ask-btn:disabled { opacity: .45; cursor: default; transform: none; }
 
+.quota { margin: 12px 2px 0; font: 400 12px/1.4 var(--mono); font-stretch: 87.5%; color: var(--ink-3); }
+.quota b { color: var(--ink-2); font-weight: 500; }
+.replay { font: 500 11px/1 var(--mono); font-stretch: 87.5%; padding: 5px 9px; border-radius: 999px; background: var(--pen-soft); color: var(--pen); text-transform: none; letter-spacing: .02em; }
 .examples { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .examples-label { font-size: 13px; color: var(--ink-3); margin-right: 4px; }
 .chip {
@@ -314,6 +317,7 @@ footer { border-top: 1px solid var(--rule); margin-top: 24px; padding-top: 20px;
         <input id="q" name="q" maxlength="300" placeholder="e.g. How does the app decide a stock is unusual?" required>
         <button class="ask-btn" id="ask-btn" type="submit">Ask</button>
       </form>
+      <p class="quota" id="quota"></p>
       <div class="examples" id="examples" aria-label="Example questions"><span class="examples-label">Try:</span></div>
 
       <figure class="skyline-wrap" aria-label="Map of every file in the repository">
@@ -533,7 +537,8 @@ function onTrace(e) {
 function onAnswer(a) {
   $("#pending")?.remove();
   const conf = { high: "High confidence", medium: "Medium confidence", low: "Low confidence" }[a.confidence] || a.confidence;
-  $("#conf-slot").innerHTML = `<span class="conf ${esc(a.confidence)}"><i></i>${esc(conf)}</span>`;
+  $("#conf-slot").innerHTML = (a.cached ? `<span class="replay" title="This question was answered before; its steps are replayed at speed.">instant replay</span> ` : "")
+    + `<span class="conf ${esc(a.confidence)}"><i></i>${esc(conf)}</span>`;
   $("#answer-body").innerHTML = `<div class="answer-text">${paras(a.answer)}</div>`;
   const list = $("#source-list");
   list.innerHTML = "";
@@ -623,7 +628,15 @@ async function ask(question) {
     onError("Couldn't reach the server. Check your connection and try again.");
   } finally {
     clearInterval(timer); busy = false; $("#ask-btn").disabled = false;
+    refreshQuota();
   }
+}
+async function refreshQuota() {
+  try {
+    const info = await fetch("/api/info").then(r => r.json());
+    $("#quota").innerHTML = `Examples are instant · New questions: <b>${info.per_hour} per hour</b>, <b>${info.live_left_today}</b> left today`;
+    return info;
+  } catch { return null; }
 }
 $("#ask-form").addEventListener("submit", ev => { ev.preventDefault(); ask($("#q").value); });
 
@@ -686,7 +699,7 @@ async function loadResults() {
 (async () => {
   show(location.hash === "#results" ? "results" : "ask");
   try {
-    const [info, list] = await Promise.all([fetch("/api/info").then(r => r.json()), fetch("/api/files").then(r => r.json())]);
+    const [info, list] = await Promise.all([refreshQuota(), fetch("/api/files").then(r => r.json())]);
     $("#file-count").textContent = list.length;
     $("#model-note").textContent = `Model: ${info.model}`;
     examples = info.examples;

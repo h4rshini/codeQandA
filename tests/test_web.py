@@ -12,8 +12,19 @@ from web import app as web
 
 @pytest.fixture
 def client(monkeypatch, tmp_path):
+    from web.guard import AnswerCache, DailyCap, RateLimiter
     monkeypatch.setattr(config, "TRACE_DIR", tmp_path)
+    # fresh limits per test; empty cache so questions really reach the (fake) agent
+    monkeypatch.setattr(web, "cache", AnswerCache())
+    monkeypatch.setattr(web, "limiter", RateLimiter(100))
+    monkeypatch.setattr(web, "daily", DailyCap(100))
     return TestClient(web.app)
+
+
+def _fake_agent(question, tracer):
+    tracer.log("tool_call", name="search_code", args={"query": question}, result_summary="1 hit")
+    tracer.close()
+    return AgentAnswer(answer="42", cited_files=[{"path": "a.py", "lines": [1, 2]}], confidence="high")
 
 
 def _events(resp):
@@ -77,3 +88,42 @@ def test_collection_opens_once_under_concurrency(monkeypatch):
     for t in threads: t.start()
     for t in threads: t.join()
     assert len(calls) == 1
+
+
+def test_repeat_question_is_replayed_from_cache(client, monkeypatch):
+    calls = []
+    monkeypatch.setattr(web, "run_agent", lambda q, tracer: calls.append(q) or _fake_agent(q, tracer))
+    first = _events(client.post("/api/ask", json={"question": "Where is X?"}))
+    again = _events(client.post("/api/ask", json={"question": "  where is x "}))
+    assert len(calls) == 1                                   # second one never hit the agent
+    assert [k for k, _ in again] == [k for k, _ in first] == ["trace", "answer"]
+    assert again[-1][1]["cached"] is True and "cached" not in first[-1][1]
+
+
+def test_per_visitor_limit_returns_429(client, monkeypatch):
+    from web.guard import RateLimiter
+    monkeypatch.setattr(web, "limiter", RateLimiter(1))
+    monkeypatch.setattr(web, "run_agent", _fake_agent)
+    assert client.post("/api/ask", json={"question": "first question"}).status_code == 200
+    r = client.post("/api/ask", json={"question": "second question"})
+    assert r.status_code == 429 and "this hour" in r.json()["detail"]
+    # cached questions still work for a rate-limited visitor
+    assert client.post("/api/ask", json={"question": "first question"}).status_code == 200
+
+
+def test_daily_cap_returns_429_and_releases_slot(client, monkeypatch):
+    from web.guard import DailyCap
+    monkeypatch.setattr(web, "daily", DailyCap(0))
+    r = client.post("/api/ask", json={"question": "anything new"})
+    assert r.status_code == 429 and "today" in r.json()["detail"]
+    assert web.running.acquire(blocking=False)  # the rejected request gave its slot back
+    web.running.release()
+
+
+def test_seed_cache_covers_every_example():
+    import yaml
+    spec = yaml.safe_load((web.EVALS / "questions.yaml").read_text())
+    from web.guard import AnswerCache
+    c = AnswerCache()
+    c.load(web.SEED_CACHE)
+    assert all(c.get(q["question"]) for q in spec["questions"])
